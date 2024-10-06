@@ -20,8 +20,6 @@
 
     - name: Build Docker Image
       command: docker build -t mahshamim/abstechnologies .
-      #args:
-        #chdir: /path/to/docker/project  # Replace with your actual Docker project path
 
     - name: Run Docker Container
       command: docker run -d -p 9292:80 abstechnologies-ansible
