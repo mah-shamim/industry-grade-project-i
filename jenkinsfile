@@ -1,0 +1,38 @@
+pipeline
+{
+	agent any
+	stages
+	{
+		stage('Code Checkout')
+		{
+			steps
+			{
+				git 'https://github.com/jsachdev07/igp-sep21.git'
+			}
+		}
+		
+		stage('Code Compile')
+		{
+			steps
+			{
+				sh 'mvn compile'
+			}
+		}
+
+		stage('Test')
+		{
+			steps
+			{
+				sh 'mvn test'
+			}
+		}
+
+		stage('Packaging')
+		{
+			steps
+			{
+				sh 'mvn package'
+			}
+		}
+   }
+}
