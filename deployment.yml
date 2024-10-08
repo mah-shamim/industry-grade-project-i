@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: abstechnologies
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: abstechnologies
+  template:
+    metadata:
+      labels:
+        app: abstechnologies
+    spec:
+      containers:
+        - name: abstechnologies
+          image: mahshamim/abstechnologies:latest
+          ports:
+            - containerPort: 8080
