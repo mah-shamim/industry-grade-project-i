@@ -2,7 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: Prometheus
 metadata:
   name: prometheus
-  namespace: your-namespace  # Replace with your desired namespace
+  namespace: monitoring  # Replace with your desired namespace
 spec:
   serviceAccountName: prometheus  # Optional, use your service account name
   replicas: 1

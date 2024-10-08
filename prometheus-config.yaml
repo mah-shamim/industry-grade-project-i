@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: prometheus-config
-  namespace: your-namespace  # Replace with your desired namespace
+  namespace: monitoring  # Replace with your desired namespace
 data:
   prometheus.yml: |
     global:
