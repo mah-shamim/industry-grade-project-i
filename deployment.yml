@@ -17,3 +17,6 @@ spec:
           image: mahshamim/abstechnologies:latest
           ports:
             - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "prod"  # Specify the active profile if needed
