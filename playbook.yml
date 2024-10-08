@@ -2,6 +2,8 @@
   become: yes
   become_method: sudo
   become_user: root
+  vars:
+    docker_tag: "v1.0"  # Change this to any tag you want
   tasks:
     - name: Check if Docker is already installed
       command: docker --version
@@ -30,14 +32,14 @@
       command: docker build -t mahshamim/abstechnologies .
 
     - name: Run Docker Container
-      command: docker run -d -p 9292:80 mahshamim/abstechnologies
+      command: docker run -d -p 9292:8080 mahshamim/abstechnologies
 
     - name: Log in to Docker Hub
       command: docker login -u "mahshamim" -p "01614747054@R!f"
       no_log: true
 
     - name: Tag Docker image for Docker Hub
-      command: docker tag mahshamim/abstechnologies "mahshamim/abstechnologies:latest"
+      command: docker tag mahshamim/abstechnologies "mahshamim/abstechnologies:{{ docker_tag }}"
 
     - name: Push Docker image to Docker Hub
-      command: docker push "mahshamim/abstechnologies:latest"
+      command: docker push "mahshamim/abstechnologies:{{ docker_tag }}"
