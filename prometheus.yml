@@ -1,24 +1,11 @@
-apiVersion: monitoring.coreos.com/v1
-kind: Prometheus
-metadata:
-  name: prometheus
-  namespace: monitoring  # Replace with your desired namespace
-spec:
-  serviceAccountName: prometheus  # Optional, use your service account name
-  replicas: 1
-  podMonitorSelector: {}
-  serviceMonitorSelector: {}
-  resources:
-    requests:
-      memory: 400Mi
-  scrapeInterval: 15s
-  ruleSelector: {}
-  version: v2.26.0  # Specify your desired version
-  storage:
-    volumeClaimTemplate:
-      spec:
-        accessModes:
-          - "ReadWriteOnce"
-        resources:
-          requests:
-            storage: 1Gi
+scrape_configs:
+  - job_name: 'kubernetes-services'
+    kubernetes_sd_configs:
+      - role: endpoints
+    relabel_configs:
+      - action: labelmap
+        regex: __meta_kubernetes_service_label_(.+)
+      - source_labels: [__meta_kubernetes_service_name]
+        action: replace
+        target_label: service
+        replacement: $1
