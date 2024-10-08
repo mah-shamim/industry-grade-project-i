@@ -1,3 +1,7 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
 scrape_configs:
   - job_name: 'kubernetes-services'
     kubernetes_sd_configs:
@@ -9,3 +13,18 @@ scrape_configs:
         action: replace
         target_label: service
         replacement: $1
+
+  - job_name: 'docker'
+    static_configs:
+      - targets: ['localhost:9090']  # Adjust as necessary
+
+  - job_name: 'abstechnologies-app'
+    static_configs:
+      - targets: [ '52.90.8.68:9191' ] # Adjust port if necessary
+  - job_name: 'abstechnologies-app2'
+    static_configs:
+      - targets: [ '52.90.8.68:9292' ] # Adjust port if necessary
+
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets: [ 'localhost:9100' ]  # Ensure you have Node Exporter running on this port
