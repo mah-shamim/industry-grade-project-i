@@ -4,6 +4,7 @@
   become_user: root
   vars:
     docker_tag: "v1.0"  # Change this to any tag you want
+    container_name: "abctechnologies"
   tasks:
     - name: Check if Docker is already installed
       command: docker --version
@@ -31,8 +32,16 @@
     - name: Build Docker Image
       command: docker build -t mahshamim/abstechnologies .
 
+    - name: Stop existing Docker container if running
+      command: docker stop {{ container_name }}
+      ignore_errors: true
+
+    - name: Remove existing Docker container if exists
+      command: docker rm {{ container_name }}
+      ignore_errors: true
+
     - name: Run Docker Container
-      command: docker run -d -p 9292:8080 mahshamim/abstechnologies
+      command: docker run -d --name {{ container_name }} -p 9292:8080 mahshamim/abstechnologies
 
     - name: Log in to Docker Hub
       command: docker login -u "mahshamim" -p "01614747054@R!f"
