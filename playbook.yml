@@ -20,18 +20,24 @@
         state: started
         enabled: true
 
+    - name: Build WAR file using Maven (if applicable)
+      command: mvn clean package
+      args:
+        chdir: ./
+      when: docker_installed.rc == 0  # Run only if Docker is installed
+
     - name: Build Docker Image
       command: docker build -t mahshamim/abstechnologies .
 
     - name: Run Docker Container
-      command: docker run -d -p 9292:80 abstechnologies-ansible
+      command: docker run -d -p 9292:80 mahshamim/abstechnologies
 
     - name: Log in to Docker Hub
       command: docker login -u "mahshamim" -p "01614747054@R!f"
       no_log: true
 
     - name: Tag Docker image for Docker Hub
-      command: docker tag abstechnologies-ansible "mahshamim/abstechnologies:latest"
+      command: docker tag mahshamim/abstechnologies "mahshamim/abstechnologies:latest"
 
     - name: Push Docker image to Docker Hub
       command: docker push "mahshamim/abstechnologies:latest"
