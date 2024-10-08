@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Code Checkout') {
             steps {
-                git branch: 'master', credentialsId: '', url: 'https://github.com/mah-shamim/industry-grade-project-i.git'
+                git branch: 'master', url: 'https://github.com/mah-shamim/industry-grade-project-i.git'
             }
         }
 
@@ -60,6 +60,22 @@ pipeline {
                         // Push the Docker image to the registry
                         dockerImage.push("${DOCKER_TAG}")
                     }
+                }
+            }
+        }
+        stage('Run Docker Container') {
+            steps {
+                script {
+                    // Stop any running container with the same name
+                    sh '''
+                    if [ $(docker ps -q -f name=${CONTAINER_NAME}) ]; then
+                        docker stop ${CONTAINER_NAME}
+                        docker rm ${CONTAINER_NAME}
+                    fi
+                    '''
+
+                    // Run a new container from the pushed image
+                    sh "docker run -d --name ${CONTAINER_NAME} -p 9191:8080 ${DOCKER_IMAGE}:${DOCKER_TAG}"
                 }
             }
         }
