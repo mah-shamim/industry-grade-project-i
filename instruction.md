@@ -2,51 +2,64 @@ industry-grade-project-i
 =========================
 To build a CI/CD pipeline for a retail company on an *AWS EC2 Ubuntu 24.04 instance*, you'll follow a step-by-step guide. Below is the full solution for each step, integrating Jenkins, Docker, Ansible, Kubernetes, Prometheus, and Grafana.
 
----
-
-### *1. Set Up the EC2 Environment*
-Launch an *Ubuntu 24.04 EC2 instance* from AWS Management Console:
-- Ensure the following:
-    - Choose *Ubuntu 24.04 LTS* AMI.
-    - Select a proper instance type, e.g., *t2.medium* (for better performance).
-    - Allow SSH, HTTP, and HTTPS traffic under *security groups*.
-
-*Access the EC2 Instance:*
-- SSH into the instance using the PEM key.
-```bash
-  ssh -i "your-key.pem" ubuntu@ec2-public-ip
-```
+### Prerequisites:
+- **AWS EC2 Ubuntu 24.04 instance**
+- Access to **GitHub** and **DockerHub**
+- **Java**, **Maven**, **Git**, **Jenkins**, **Docker**, **Ansible**, **Kubernetes**, **Prometheus**, and **Grafana** pre-installed.
 
 ---
 
-### *2. Install Required Tools*
-Start by updating the system and installing the prerequisites:
+### **1. Setup the AWS EC2 Instance**
+1.1. **Launch an AWS EC2 instance**:
+    - Log in to your AWS account, navigate to the EC2 dashboard, and launch a new instance.
+    - Select Ubuntu Server 24.04 LTS as the AMI.
+    - Choose an instance type (t2.micro for testing, or a larger instance for production).
+    - Configure security groups to allow SSH (port 22), HTTP (port 80), HTTPS (port 443), and custom ports for Jenkins (8080), Docker (2376), Grafana (3000), and Kubernetes if required.
+    - Add an SSH key pair to connect to your instance.
 
-#### *Update System Packages:*
-```bash
-sudo apt-get update
-sudo apt-get upgrade -y
-```
+1.2. **Connect to the instance**:
+    - Open **Terminal (Linux/Mac)** or **Putty (Windows)**.
+    - Navigate to the directory where the `.pem` file is saved.
+    - Run the following command (replacing `<key-file>` and `<public-ip>`):
+       ```bash
+           chmod 400 <key-file>.pem
+           ssh -i <key-file>.pem ubuntu@<public-ip>
+       ```
+    - You are now logged into your EC2 instance.
 
-#### *Install Java:*
-```bash
-sudo apt-get install default-jdk -y
-java -version
-```
 
-#### *Install Maven:*
-```bash
-sudo apt-get install maven -y
-mvn -version
-```
+1.3. **Update and upgrade packages**:
+   ```bash
+   sudo apt-get update && sudo apt-get upgrade -y
+   ```
 
-#### *Install Git:*
-```bash
-sudo apt-get install git -y
-git --version
-```
+---
 
-#### *Install Docker:*
+### **2. Install Required Tools**
+
+2.1. **Install Java**:
+   Jenkins requires Java to run.
+   ```bash
+   sudo apt install openjdk-11-jdk -y
+   java -version
+   ```
+
+2.2. **Install Git**:
+   ```bash
+   sudo apt-get install git -y
+   git --version
+   ```
+
+2.3. **Install Maven**:
+   Maven is used to build Java projects.
+   ```bash
+   sudo apt install maven -y
+   mvn -version
+   ```
+
+2.4. **Install Docker**:
+Docker will containerize the application.
+
 ```bash
 sudo apt-get install docker.io -y
 sudo systemctl start docker
@@ -59,7 +72,8 @@ sudo usermod -aG docker $USER
 ```
 Then logout and re-login for group changes to take effect.
 
-#### *Install Jenkins:*
+2.5. **Install Jenkins**:
+Jenkins automates builds and deployments.
 ```bash
 wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
 sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
@@ -74,7 +88,9 @@ sudo systemctl enable jenkins
   sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 ```
 
-#### *Install Ansible:*
+2.6. **Install Ansible**:
+   Ansible will automate the deployment process.
+
 ```bash
 sudo apt-get install ansible -y
 
@@ -96,7 +112,14 @@ EOL
 ansible --version
 ```
 
-#### *Install Kubernetes Tools:*
+**Add Remote Hosts to Inventory:** Edit the `~/ansible/hosts` file to include your remote servers:
+```bash
+[webservers]
+remote-server-ip ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/your-key.pem
+
+```
+
+2.7. *Install Kubernetes Tools:*
 Install *kubectl* and *minikube*:
 ```bash
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -111,8 +134,8 @@ minikube start
 ```
 
 
-#### *Install Prometheus & Grafana:*
-1. *Prometheus*:
+2.8. *Install Prometheus & Grafana:*
+2.8.1. *Prometheus*:
    ```bash
    wget https://github.com/prometheus/prometheus/releases/download/v2.40.3/prometheus-2.40.3.linux-amd64.tar.gz
    tar -xvzf prometheus-2.40.3.linux-amd64.tar.gz
@@ -121,7 +144,7 @@ minikube start
    ```
 
 
-2. *Grafana*:
+2.8.2. *Grafana*:
    ```bash
    sudo apt-get install -y software-properties-common
    sudo add-apt-repository "deb https://packages.grafana.com/oss/deb stable main"
@@ -135,23 +158,46 @@ minikube start
 
 ---
 
-### *3. Jenkins Pipeline Configuration*
+### *3. Build a CI/CD Pipeline*
+3.1. **Clone the GitHub Repository**
+    Clone the project repository to your EC2 instance:
+```bash
+git clone https://github.com/mah-shamim/industry-grade-project-i.git
+cd industry-grade-project-i
+```
 
 #### *Step 1: Create Jenkins Pipeline*
-1. Login to *Jenkins* (http://<EC2_PUBLIC_IP>:8080).
-2. Install the required plugins:
+3.2. Login to *Jenkins* (http://<EC2_PUBLIC_IP>:8080).
+3.3 Install the required plugins:
     - *Docker Plugin*
     - *Ansible Plugin*
     - *Kubernetes Plugin*
+3.4. Integrate GitHub with Jenkins:
+    - Add GitHub credentials to Jenkins.
+        - Go to Jenkins Dashboard > Manage Jenkins > Manage Credentials.
+        - Add a new set of credentials with:
+        - Secret Text: Your GitHub Personal Access Key.
+        - ID: Use a recognizable ID like github.
+    - Set up a new Jenkins pipeline for CI/CD, pulling the code from the cloned repository.
+    - Create Docker Hub Credentials:
+        - Go to Jenkins Dashboard > Manage Jenkins > Manage Credentials.
+        - Add a new set of credentials with:
+            - Username: Your Docker Hub username.
+            - Password: Your Docker Hub password or access token.
+            - ID: Use a recognizable ID like dockerhub.
+    - Install Docker Plugin in Jenkins:
+        - Go to Manage Jenkins > Manage Plugins > Available.
+        - Search for "Docker" and install the "Docker" and "Docker Pipeline" plugins.
+        - Restart Jenkins if prompted.
 
-3. Create a *Freestyle Job* for each task:
+3.5. Create a *Freestyle Job* for each task:
     - *Compile Job*: Uses Maven to compile the code.
     - *Test Job*: Runs tests.
     - *Package Job*: Packages the code into a .war file.
 
 #### *Step 2: Setup Docker Integration*
 
-*Dockerfile* example to deploy the .war to a Tomcat server:
+3.6. *Dockerfile* example to deploy the .war to a Tomcat server:
 ```dockerfile
 FROM iamdevopstrainer/tomcat:base
 COPY target/ABCtechnologies-1.0.war /usr/local/tomcat/webapps/
@@ -168,7 +214,7 @@ docker push mahshamim/abstechnologies:latest
 Configure Jenkins to build and push Docker images after packaging.
 
 #### *Step 3: Write Jenkinsfile*
-A basic *Jenkinsfile* for CI/CD:
+3.7. A basic *Jenkinsfile* for CI/CD:
 ```groovy
 pipeline {
     agent any
