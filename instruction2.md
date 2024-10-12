@@ -355,10 +355,12 @@ Create an Ansible playbook for deployment:
 
 **Test the Ansible Playbook:** Run the following command to execute the playbook:
 ```bash
-ansible-playbook ~/ansible/palybook.yml
+cd industry-grade-project-i
+ansible-playbook playbook.yml
 ```
 OR
 ```bash
+cd industry-grade-project-i
 ansible-playbook -i inventory.ini playbook.yml --become
 ```
 #### 3.8 Deploy Artifacts to Kubernetes
