@@ -62,11 +62,11 @@
     - name: Apply Kubernetes Deployment
       ansible.builtin.k8s:
         state: present
-        kubeconfig: ~/.kube/config  # Update this if using a different kubeconfig path
-        definition: "{{ lookup('file', 'deployment.yaml') }}"
+        kubeconfig: "{{ kubeconfig_path }}"
+        definition: "{{ lookup('file', deployment_file) }}"
 
     - name: Apply Kubernetes Service
       ansible.builtin.k8s:
         state: present
-        kubeconfig: ~/.kube/config
-        definition: "{{ lookup('file', 'service.yaml') }}"
+        kubeconfig: "{{ kubeconfig_path }}"
+        definition: "{{ lookup('file', service_file) }}"
