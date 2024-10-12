@@ -8,6 +8,9 @@
     image_name: "mahshamim/abstechnologies"
     docker_username: "mahshamim"
     docker_password: "01614747054@R!f"
+    kubeconfig_path: ~/.kube/config
+    deployment_file: /home/ubuntu/industry-grade-project-i/deployment.yaml
+    service_file: /home/ubuntu/industry-grade-project-i/service.yaml
   tasks:
     - name: Check if Docker is already installed
       command: docker --version

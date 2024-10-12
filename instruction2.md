@@ -368,7 +368,7 @@ ansible-playbook -i inventory.ini playbook.yml --become
 ```
 #### 3.8 Deploy Artifacts to Kubernetes
 3.8.1. **Kubernetes Deployment Manifest**:
-Create a file named `deployment.yaml`:
+Create a file named `deployment.yml`:
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -411,8 +411,8 @@ spec:
 3.8.3. **Deploy to Kubernetes**:
 Run the following commands:
 ```bash
-kubectl apply -f deployment.yaml
-kubectl apply -f service.yaml
+kubectl apply -f deployment.yml --validate=false
+kubectl apply -f service.yaml --validate=false
 ```
 
 ### 3.8.4. *Enable Kubernetes Dashboard*
