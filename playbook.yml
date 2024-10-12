@@ -5,6 +5,9 @@
   vars:
     docker_tag: "v1.0"  # Change this to any tag you want
     container_name: "abctechnologies"
+    image_name: "mahshamim/abstechnologies"
+    docker_username: "mahshamim"
+    docker_password: "01614747054@R!f"
   tasks:
     - name: Check if Docker is already installed
       command: docker --version
@@ -30,7 +33,7 @@
       when: docker_installed.rc == 0  # Run only if Docker is installed
 
     - name: Build Docker Image
-      command: docker build -t mahshamim/abstechnologies .
+      command: docker build -t {{ image_name }} .
 
     - name: Stop existing Docker container if running
       command: docker stop {{ container_name }}
@@ -41,14 +44,14 @@
       ignore_errors: true
 
     - name: Run Docker Container
-      command: docker run -d --name {{ container_name }} -p 9292:8080 mahshamim/abstechnologies
+      command: docker run -d --name {{ container_name }} -p 9292:8080 {{ image_name }}
 
     - name: Log in to Docker Hub
-      command: docker login -u "mahshamim" -p "01614747054@R!f"
+      command: docker login -u "{{ docker_username }}" -p "{{ docker_password }}"
       no_log: true
 
     - name: Tag Docker image for Docker Hub
-      command: docker tag mahshamim/abstechnologies "mahshamim/abstechnologies:{{ docker_tag }}"
+      command: docker tag {{ image_name }} "{{ image_name }}:{{ docker_tag }}"
 
     - name: Push Docker image to Docker Hub
-      command: docker push "mahshamim/abstechnologies:{{ docker_tag }}"
+      command: docker push "{{ image_name }}:{{ docker_tag }}"
