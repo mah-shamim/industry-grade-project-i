@@ -3,7 +3,7 @@
   become_method: sudo
   become_user: root
   vars:
-    docker_tag: "v1.0"  # Change this to any tag you want
+    docker_tag: "v2.0"  # Change this to any tag you want
     container_name: "abctechnologies"
     image_name: "mahshamim/abstechnologies"
     docker_username: "mahshamim"
