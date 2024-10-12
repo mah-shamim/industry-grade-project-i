@@ -82,8 +82,10 @@ Log out and re-login for the group changes to take effect.
 #### 2.5 Install Jenkins:
 Jenkins automates builds and deployments.
 ```bash
-wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
-sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+#wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
+#sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | sudo tee   /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/ | sudo tee   /etc/apt/sources.list.d/jenkins.list > /dev/null
 sudo apt-get update
 sudo apt-get install jenkins -y
 sudo systemctl start jenkins
@@ -93,7 +95,7 @@ sudo systemctl enable jenkins
 **Permissions and Jenkins Docker Setup**:
 ```bash
 if command_exists docker && command_exists jenkins; then
-    sudo usermod -aG $DOCKER_USER $JENKINS_USER
+    sudo usermod -aG docker jenkins
     sudo chmod 666 /var/run/docker.sock
     echo "jenkins ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers.d/jenkins
 fi
@@ -524,13 +526,35 @@ Copy the token and use it for logging into the dashboard.
     - This dashboard includes visualizations for Jenkins job metrics, build times, queue lengths, and more.
 
 6. **Here are a few commonly used Grafana Dashboard IDs**:
+    - 315: Kubernetes cluster monitoring (via Prometheus)
     - 449: Networking and Load Balancers
+    - 741: Kubernetes Deployment metrics
     - 893: Docker and cAdvisor monitoring.
     - 1860: Node Exporter Full for Linux servers.
-    - 11501: Jenkins monitoring using Prometheus metrics.
     - 2583: MySQL overview with Prometheus as the data source.
-    - 11074: Elasticsearch monitoring.
+    - 3831: Kubernetes Cluster Autoscaler (via Prometheus).
+    - 6417: Kubernetes Cluster (Prometheus).
+    - 7587: Prometheus Blackbox Exporter.
+    - 8171: Kubernetes Nodes.
+    - 9578: Alertmanager.
+    - 9621: Docker Registry.
     - 10701: Nginx monitoring.
+    - 10988: Nginx monitoring.
+    - 11350: Erlang-Memory-Allocators.
+    - 11352: Erlang-Distribution.
+    - 11455: K8s / Storage / Volumes / Namespace.
+    - 11074: Elasticsearch monitoring.
+    - 11501: Jenkins monitoring using Prometheus metrics.
+    - 11558: 1 Docker Dashboard for Prometheus 中文版.
+    - 12006: Kubernetes apiserver
+    - 13041: Website monitoring
+    - 13332: kube-state-metrics-v2
+    - 13659: Blackbox Exporter (HTTP prober)
+    - 13770: 1 Kubernetes All-in-one Cluster Monitoring KR
+    - 14584: ArgoCD
+    - 14981: CoreDNS
+    - 15159: 1 - Cluster & Node - Health & Scaling
+    - 15160: 1 - Deployment Performance & Health
     - Visit the Grafana Dashboards Repository for find more.
 
 ---
