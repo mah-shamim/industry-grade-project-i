@@ -3,8 +3,7 @@
   become_method: sudo
   become_user: root
   vars:
-    #ansible_python_interpreter: /home/ubuntu/k8s-ansible-venv/bin/python
-    ansible_python_interpreter: /usr/bin/python3
+    ansible_python_interpreter: /home/ubuntu/k8s-ansible-venv/bin/python
     docker_tag: "v4.0"  # Change this to any tag you want
     container_name: "abctechnologies_ansible"
     image_name: "mahshamim/abstechnologies_ansible"
@@ -16,17 +15,17 @@
     namespace: "abc-technologies-ansible" # Add your desired namespace here
     docker_host: "unix:///var/run/docker.sock"
   tasks:
-    #- name: Use Python from virtual environment
-    #ansible.builtin.shell: |
-    #source /home/ubuntu/k8s-ansible-venv/bin/activate && pip install kubernetes packaging
-    #args:
-    #executable: /bin/bash
+    - name: Use Python from virtual environment
+      ansible.builtin.shell: |
+        source /home/ubuntu/k8s-ansible-venv/bin/activate && pip install kubernetes packaging
+      args:
+      executable: /bin/bash
 
-    #- name: Check Python Kubernetes module
-    #ansible.builtin.command: /home/ubuntu/k8s-ansible-venv/bin/python -c "import kubernetes"
+    - name: Check Python Kubernetes module
+      ansible.builtin.command: /home/ubuntu/k8s-ansible-venv/bin/python -c "import kubernetes"
 
-    #- name: List installed packages
-    #ansible.builtin.command: /home/ubuntu/k8s-ansible-venv/bin/pip list
+    - name: List installed packages
+      ansible.builtin.command: /home/ubuntu/k8s-ansible-venv/bin/pip list
 
 
     - name: Check if Docker is already installed
