@@ -25,12 +25,6 @@
     - name: List installed packages
       ansible.builtin.command: /home/ubuntu/k8s-ansible-venv/bin/pip list
 
-    - name: Check Python Kubernetes module
-      pip:
-        name: kubernetes
-        executable: pip3
-    #- name: Check Python environment
-      #command: python3 -c "import kubernetes"
 
     - name: Check if Docker is already installed
       command: docker --version
