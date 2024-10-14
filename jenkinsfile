@@ -3,9 +3,10 @@ pipeline {
     environment {
         DOCKER_CREDENTIALS_ID = 'dockerhub' // Jenkins ID for DockerHub credentials
         DOCKER_IMAGE = 'mahshamim/abstechnologies'
-        DOCKER_REGISTRY = 'https://index.docker.io/v1/' // For DockerHub, this is the registry URL
+        DOCKER_REGISTRY = 'https://index.docker.io/v1/' // For DockerHub
         CONTAINER_NAME = "abctechnologies"
-        DOCKER_TAG = "${BUILD_ID}"  // Use the BUILD_ID as the tag for versioning
+        DOCKER_TAG = "${BUILD_ID}"  // Use the BUILD_ID as the tag
+        CONTAINER_PORT = "9191"  // Use the BUILD_ID as the tag
     }
     stages {
         stage('Code Checkout') {
@@ -29,64 +30,58 @@ pipeline {
         stage('Package') {
             steps {
                 sh 'mvn package'
-                sh 'ls -l target/'  // List contents of the target directory
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build the Docker image and tag it with the $BUILD_ID
-                    dockerImage = docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                    docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
                 }
             }
         }
 
-        stage('Login to DockerHub') {
+        stage('Push to DockerHub') {
             steps {
                 script {
-                    // Login to DockerHub using Jenkins credentials
-                    docker.withRegistry(DOCKER_REGISTRY, DOCKER_CREDENTIALS_ID) {
-                        echo 'Logged into DockerHub'
+                    docker.withRegistry("${DOCKER_REGISTRY}", "${DOCKER_CREDENTIALS_ID}") {
+                        docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").push()
                     }
                 }
             }
         }
-
-        stage('Push Docker Image') {
-            steps {
+        stage('Stopping and removing existing container...')
+		{
+			steps {
                 script {
-                    docker.withRegistry(DOCKER_REGISTRY, DOCKER_CREDENTIALS_ID) {
-                        // Push the Docker image to the registry
-                        dockerImage.push("${DOCKER_TAG}")
+                    def containerExists = sh(
+                        script: "docker ps -a --filter name=${CONTAINER_NAME} --format '{{.Names}}' | grep -w ${CONTAINER_NAME}",
+                        returnStatus: true
+                    )
+
+                    if (containerExists == 0) {
+                        echo "Container ${CONTAINER_NAME} exists."
+                        // You can stop or remove the container if needed:
+                        sh "docker stop ${CONTAINER_NAME}"
+                        sh "docker rm ${CONTAINER_NAME}"
+                    } else {
+                        echo "Container ${CONTAINER_NAME} does not exist."
                     }
                 }
             }
-        }
-        stage('Run Docker Container') {
-            steps {
-                script {
-                    // Stop any running container with the same name
-                    sh '''
-                    if [ $(docker ps -q -f name=${CONTAINER_NAME}) ]; then
-                        docker stop ${CONTAINER_NAME}
-                        docker rm ${CONTAINER_NAME}
-                    fi
-                    '''
+		}
+        stage('Deploy as container')
+		{
+			steps
+			{
+				sh 'docker run -d -p ${CONTAINER_PORT}:8080 --name $CONTAINER_NAME ${DOCKER_IMAGE}:${DOCKER_TAG} || { echo "Failed to start Docker container! Exiting."; exit 1; }'
+			}
+		}
 
-                    // Run a new container from the pushed image
-                    sh "docker run -d --name ${CONTAINER_NAME} -p 9191:8080 ${DOCKER_IMAGE}:${DOCKER_TAG}"
-                }
-            }
-        }
     }
-
     post {
-        success {
-            echo 'Docker image built and pushed successfully!'
-        }
-        failure {
-            echo 'The build or push failed.'
+        always {
+            cleanWs()
         }
     }
 }
