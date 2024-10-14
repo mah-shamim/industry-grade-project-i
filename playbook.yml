@@ -10,8 +10,8 @@
     docker_username: "mahshamim"
     docker_password: "01614747054@R!f"
     kubeconfig_path: ~/.kube/config
-    deployment_file: ./k8s_deployments/deployment.yml
-    service_file: ./k8s_deployments/service.yaml
+    deployment_file: /home/ubuntu/industry-grade-project-i/k8s_deployments/deployment.yml
+    service_file: /home/ubuntu/industry-grade-project-i/k8s_deployments/service.yaml
   tasks:
     - name: Check if Docker is already installed
       command: docker --version
