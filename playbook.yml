@@ -3,15 +3,15 @@
   become_method: sudo
   become_user: root
   vars:
-    ansible_python_interpreter: /usr/bin/python3
+    #ansible_python_interpreter: /usr/bin/python3
     docker_tag: "v4.0"  # Change this to any tag you want
     container_name: "abctechnologies_ansible"
     image_name: "mahshamim/abstechnologies_ansible"
     docker_username: "mahshamim"
     docker_password: "01614747054@R!f"
     kubeconfig_path: ~/.kube/config
-    deployment_file: /home/ubuntu/industry-grade-project-i/k8s_deployments/deployment.yml
-    service_file: /home/ubuntu/industry-grade-project-i/k8s_deployments/service.yaml
+    #deployment_file: /home/ubuntu/industry-grade-project-i/k8s_deployments/deployment.yml
+    #service_file: /home/ubuntu/industry-grade-project-i/k8s_deployments/service.yaml
   tasks:
     #- name: Check Python environment
       #command: python3 -c "import kubernetes"
@@ -72,14 +72,14 @@
     - name: Push Docker image to Docker Hub
       command: docker push "{{ image_name }}:{{ docker_tag }}"
 
-    - name: Apply Kubernetes Deployment
-      ansible.builtin.k8s:
-        state: present
-        kubeconfig: "{{ kubeconfig_path }}"
-        definition: "{{ lookup('file', deployment_file) }}"
+    #- name: Apply Kubernetes Deployment
+      #ansible.builtin.k8s:
+        #state: present
+        #kubeconfig: "{{ kubeconfig_path }}"
+        #definition: "{{ lookup('file', deployment_file) }}"
 
-    - name: Apply Kubernetes Service
-      ansible.builtin.k8s:
-        state: present
-        kubeconfig: "{{ kubeconfig_path }}"
-        definition: "{{ lookup('file', service_file) }}"
+    #- name: Apply Kubernetes Service
+      #ansible.builtin.k8s:
+        #state: present
+        #kubeconfig: "{{ kubeconfig_path }}"
+        #definition: "{{ lookup('file', service_file) }}"
