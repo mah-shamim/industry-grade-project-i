@@ -3,7 +3,7 @@
   become_method: sudo
   become_user: root
   vars:
-    ansible_python_interpreter: /usr/bin/python3
+    ansible_python_interpreter: ~/k8s-ansible-venv/bin/python
     docker_tag: "v4.0"  # Change this to any tag you want
     container_name: "abctechnologies_ansible"
     image_name: "mahshamim/abstechnologies_ansible"
