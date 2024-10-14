@@ -13,6 +13,10 @@
     deployment_file: deployment.yml
     service_file: service.yaml
   tasks:
+    - name: Check Python Kubernetes module
+      pip:
+        name: kubernetes
+        executable: pip3
     #- name: Check Python environment
       #command: python3 -c "import kubernetes"
 
