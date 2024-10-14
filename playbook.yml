@@ -19,13 +19,6 @@
       set_fact:
         kubecfg: "{{ kubeconfig_path }}"
 
-    - name: Ensure Kubernetes namespace exists
-      kubernetes.core.k8s_namespace:
-        name: "{{ namespace }}"
-        state: present
-      environment:
-        KUBECONFIG: "{{ kubecfg }}"
-
 
     #- name: Use Python from virtual environment
       #ansible.builtin.shell: |
