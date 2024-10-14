@@ -1,10 +1,8 @@
 - hosts: localhost
   become: yes
-  become_method: sudo
-  become_user: root
   vars:
     ansible_python_interpreter: /home/ubuntu/k8s-ansible-venv/bin/python
-    docker_tag: "v4.0"  # Change this to any tag you want
+    docker_tag: "v4.0"
     container_name: "abctechnologies_ansible"
     image_name: "mahshamim/abstechnologies_ansible"
     docker_username: "mahshamim"
@@ -12,55 +10,41 @@
     kubeconfig_path: ~/.kube/config
     deployment_file: deployment.yml
     service_file: service.yaml
-    namespace: "abc-technologies-ansible" # Add your desired namespace here
-    docker_host: "unix:///var/run/docker.sock"
+    namespace: "abc-technologies-ansible"
   tasks:
-    - name: Use Python from virtual environment
-      ansible.builtin.shell: |
-       source /home/ubuntu/k8s-ansible-venv/bin/activate && pip install kubernetes packaging
-      args:
-      executable: /bin/bash
+    - name: Install required Python packages in the virtual environment
+      ansible.builtin.pip:
+        name:
+          - kubernetes
+          - packaging
+        virtualenv: /home/ubuntu/k8s-ansible-venv
 
     - name: Check Python Kubernetes module
       ansible.builtin.command: /home/ubuntu/k8s-ansible-venv/bin/python -c "import kubernetes"
 
-    - name: List installed packages
-      ansible.builtin.command: /home/ubuntu/k8s-ansible-venv/bin/pip list
-
-
-    - name: Check if Docker is already installed
-      command: docker --version
-      register: docker_installed
-      ignore_errors: true
-
-    - name: Install Docker
+    - name: Ensure Docker is installed
       apt:
         name: docker.io
         state: present
-      when: docker_installed.rc != 0
+      register: docker_installed
 
     - name: Start Docker Service
       service:
         name: docker
         state: started
         enabled: true
+      when: docker_installed.changed
 
     - name: Build WAR file using Maven (if applicable)
       command: mvn clean package
       args:
         chdir: ./
-      when: docker_installed.rc == 0  # Run only if Docker is installed
+      when: docker_installed.rc == 0
 
     - name: Build Docker Image
       command: docker build -t {{ image_name }} .
 
-    - name: Stop existing Docker container if running
-      docker_container:
-        name: "{{ container_name }}"
-        state: absent
-      ignore_errors: true
-
-    - name: Remove existing Docker container if exists
+    - name: Remove existing Docker container if running
       docker_container:
         name: "{{ container_name }}"
         state: absent
@@ -74,9 +58,11 @@
         published_ports:
           - "9292:8080"
 
-    - name: Log in to Docker Hub
-      command: docker login -u "{{ docker_username }}" -p "{{ docker_password }}"
-      no_log: true
+    - name: Log in to Docker Hub using Ansible's Docker login
+      community.docker.docker_login:
+        username: "{{ docker_username }}"
+        password: "{{ docker_password }}"
+        reauthorize: yes
 
     - name: Tag Docker image for Docker Hub
       command: docker tag {{ image_name }} "{{ image_name }}:{{ docker_tag }}"
@@ -97,11 +83,11 @@
         state: present
         kubeconfig: "{{ kubeconfig_path }}"
         definition: "{{ lookup('file', deployment_file) }}"
-        namespace: "{{ namespace }}"  # Specify the namespace here
+        namespace: "{{ namespace }}"
 
     - name: Apply Kubernetes Service
       kubernetes.core.k8s:
         state: present
         kubeconfig: "{{ kubeconfig_path }}"
         definition: "{{ lookup('file', service_file) }}"
-        namespace: "{{ namespace }}"  # Specify the namespace here
+        namespace: "{{ namespace }}"
