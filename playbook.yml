@@ -15,6 +15,16 @@
     namespace: "abc-technologies-ansible" # Add your desired namespace here
     docker_host: "unix:///var/run/docker.sock"
   tasks:
+    - name: Set KUBECONFIG variable
+      set_fact:
+        kubecfg: "/home/ubuntu/.kube/config"
+
+    - name: Ensure Kubernetes namespace exists
+      kubernetes.core.k8s_namespace:
+        name: "{{ namespace }}"
+        state: present
+      environment:
+        KUBECONFIG: "{{ kubecfg }}"
     #- name: Use Python from virtual environment
       #ansible.builtin.shell: |
       #source /home/ubuntu/k8s-ansible-venv/bin/activate && pip install kubernetes packaging
