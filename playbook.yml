@@ -3,7 +3,7 @@
   become_method: sudo
   become_user: root
   vars:
-    ansible_python_interpreter: /usr/bin/python3
+    #ansible_python_interpreter: /usr/bin/python3
     docker_tag: "v4.0"  # Change this to any tag you want
     container_name: "abctechnologies_ansible"
     image_name: "mahshamim/abstechnologies_ansible"
@@ -13,8 +13,8 @@
     deployment_file: /home/ubuntu/industry-grade-project-i/k8s_deployments/deployment.yml
     service_file: /home/ubuntu/industry-grade-project-i/k8s_deployments/service.yaml
   tasks:
-    - name: Check Python environment
-      command: python3 -c "import kubernetes"
+    #- name: Check Python environment
+      #command: python3 -c "import kubernetes"
 
     - name: Check if Docker is already installed
       command: docker --version
