@@ -5,8 +5,8 @@
   vars:
     ansible_python_interpreter: /usr/bin/python3
     docker_tag: "v4.0"  # Change this to any tag you want
-    container_name: "abctechnologies-ansible"
-    image_name: "mahshamim/abstechnologies-ansible"
+    container_name: "abctechnologies_ansible"
+    image_name: "mahshamim/abstechnologies_ansible"
     docker_username: "mahshamim"
     docker_password: "01614747054@R!f"
     kubeconfig_path: ~/.kube/config
