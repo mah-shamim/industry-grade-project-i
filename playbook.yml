@@ -11,6 +11,7 @@
     kubeconfig_path: ~/.kube/config
     deployment_file: ./k8s_deployments/deployment.yml
     service_file: ./k8s_deployments/service.yaml
+    ansible_python_interpreter: ~/k8s-venv/bin/python
   tasks:
     - name: Check if Docker is already installed
       command: docker --version
