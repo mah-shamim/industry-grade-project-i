@@ -12,6 +12,7 @@
     kubeconfig_path: ~/.kube/config
     deployment_file: deployment.yml
     service_file: service.yaml
+    namespace: abc-technologies_ansible" # Add your desired namespace here
   tasks:
     - name: Use Python from virtual environment
       ansible.builtin.shell: |
@@ -82,14 +83,24 @@
     - name: Push Docker image to Docker Hub
       command: docker push "{{ image_name }}:{{ docker_tag }}"
 
+    - name: Ensure Kubernetes namespace exists
+      kubernetes.core.k8s:
+        name: "{{ namespace }}"
+        state: present
+        kubeconfig: "{{ kubeconfig_path }}"
+        api_version: v1
+        kind: Namespace
+
     - name: Apply Kubernetes Deployment
       kubernetes.core.k8s:
         state: present
         kubeconfig: "{{ kubeconfig_path }}"
         definition: "{{ lookup('file', deployment_file) }}"
+        namespace: "{{ namespace }}"  # Specify the namespace here
 
     - name: Apply Kubernetes Service
       kubernetes.core.k8s:
         state: present
         kubeconfig: "{{ kubeconfig_path }}"
         definition: "{{ lookup('file', service_file) }}"
+        namespace: "{{ namespace }}"  # Specify the namespace here
