@@ -19,6 +19,12 @@
         state: present
         executable: /usr/bin/pip3
 
+    - name: Install openshift Python library
+      pip:
+        name: openshift
+        state: present
+        executable: pip3
+
     - name: Check if Docker is already installed
       command: docker --version
       register: docker_installed
