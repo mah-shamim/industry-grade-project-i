@@ -1,4 +1,4 @@
-- hosts: k8s
+- hosts: localhost
   become: yes
   become_method: sudo
   become_user: root
