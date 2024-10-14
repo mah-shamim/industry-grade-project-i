@@ -19,6 +19,12 @@
       set_fact:
         kubecfg: "{{ kubeconfig_path }}"
 
+    - name: Copy Kubeconfig to remote machine
+      copy:
+        src: /home/ubuntu/.kube/config
+        dest: /home/ubuntu/.kube/config
+        mode: '0644'
+        
     - name: Ensure Kubernetes namespace exists
       kubernetes.core.k8s:
         name: "{{ namespace }}"
