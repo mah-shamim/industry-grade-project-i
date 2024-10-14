@@ -13,6 +13,7 @@
     deployment_file: deployment.yml
     service_file: service.yaml
     namespace: "abc-technologies-ansible" # Add your desired namespace here
+    docker_host: "unix:///var/run/docker.sock"
   tasks:
     - name: Use Python from virtual environment
       ansible.builtin.shell: |
@@ -57,12 +58,14 @@
       docker_container:
           name: "{{ container_name }}"
           state: absent
+          docker_host: "{{ docker_host }}"
       ignore_errors: true
 
     - name: Remove existing Docker container if exists
       docker_container:
         name: "{{ container_name }}"
         state: absent
+        docker_host: "{{ docker_host }}"
       ignore_errors: true
 
     - name: Run Docker Container
@@ -70,6 +73,7 @@
         name: "{{ container_name }}"
         image: "{{ image_name }}"
         state: started
+        docker_host: "{{ docker_host }}"
         published_ports:
           - "9292:8080"
 
