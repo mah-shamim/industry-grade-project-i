@@ -9,7 +9,7 @@
     image_name: "mahshamim/abstechnologies_ansible"
     docker_username: "mahshamim"
     docker_password: "01614747054@R!f"
-    kubeconfig_path: ~/.kube/config
+    #kubeconfig_path: ~/.kube/config
     #deployment_file: /home/ubuntu/industry-grade-project-i/k8s_deployments/deployment.yml
     #service_file: /home/ubuntu/industry-grade-project-i/k8s_deployments/service.yaml
   tasks:
