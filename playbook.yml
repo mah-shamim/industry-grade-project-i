@@ -3,7 +3,7 @@
   become_method: sudo
   become_user: root
   vars:
-    ansible_python_interpreter: /usr/bin/python3
+    ansible_python_interpreter: /usr/bin/env python3
     docker_tag: "v4.0"  # Change this to any tag you want
     container_name: "abctechnologies_ansible"
     image_name: "mahshamim/abstechnologies_ansible"
@@ -13,6 +13,9 @@
     deployment_file: /home/ubuntu/industry-grade-project-i/k8s_deployments/deployment.yml
     service_file: /home/ubuntu/industry-grade-project-i/k8s_deployments/service.yaml
   tasks:
+    - name: Check Python environment
+      command: python3 -c "import kubernetes"
+
     - name: Check if Docker is already installed
       command: docker --version
       register: docker_installed
@@ -40,15 +43,24 @@
       command: docker build -t {{ image_name }} .
 
     - name: Stop existing Docker container if running
-      command: docker stop {{ container_name }}
+      docker_container:
+          name: "{{ container_name }}"
+          state: absent
       ignore_errors: true
 
     - name: Remove existing Docker container if exists
-      command: docker rm {{ container_name }}
+      docker_container:
+        name: "{{ container_name }}"
+        state: absent
       ignore_errors: true
 
     - name: Run Docker Container
-      command: docker run -d --name {{ container_name }} -p 9292:8080 {{ image_name }}
+      docker_container:
+        name: "{{ container_name }}"
+        image: "{{ image_name }}"
+        state: started
+        published_ports:
+          - "9292:8080"
 
     - name: Log in to Docker Hub
       command: docker login -u "{{ docker_username }}" -p "{{ docker_password }}"
