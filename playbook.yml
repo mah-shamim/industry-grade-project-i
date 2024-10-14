@@ -14,9 +14,13 @@
     service_file: service.yaml
   tasks:
     - name: Use Python from virtual environment
-      ansible.builtin.shell: . /home/ubuntu/k8s-ansible-venv/bin/activate && /home/ubuntu/k8s-ansible-venv/bin/pip install kubernetes packaging
+      ansible.builtin.shell: |
+        source /home/ubuntu/k8s-ansible-venv/bin/activate && pip install kubernetes packaging
       args:
         executable: /bin/bash
+
+    - name: Check Python Kubernetes module
+      ansible.builtin.command: /home/ubuntu/k8s-ansible-venv/bin/python -c "import kubernetes"
 
     - name: Check Python Kubernetes module
       pip:
