@@ -22,6 +22,9 @@
     - name: Check Python Kubernetes module
       ansible.builtin.command: /home/ubuntu/k8s-ansible-venv/bin/python -c "import kubernetes"
 
+    - name: List installed packages
+      ansible.builtin.command: /home/ubuntu/k8s-ansible-venv/bin/pip list
+
     - name: Check Python Kubernetes module
       pip:
         name: kubernetes
