@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: abstechnologies-ansible-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: abstechnologies-ansible
+  template:
+    metadata:
+      labels:
+        app: abstechnologies-ansible
+    spec:
+      containers:
+        - name: abstechnologies-ansible
+          image: mahshamim/abstechnologies-ansible:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "prod"  # Specify the active profile if needed
