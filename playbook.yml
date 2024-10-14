@@ -19,8 +19,16 @@
       set_fact:
         kubecfg: "{{ kubeconfig_path }}"
 
+    - name: Ensure Kubernetes namespace exists
+      kubernetes.core.k8s:
+        name: "{{ namespace }}"
+        state: present
+        kubeconfig: "{{ kubeconfig_path }}"
+        api_version: v1
+        kind: Namespace
+        remote_src: true  # Add this line if the config is on the remote machine
 
-    #- name: Use Python from virtual environment
+      #- name: Use Python from virtual environment
       #ansible.builtin.shell: |
       #source /home/ubuntu/k8s-ansible-venv/bin/activate && pip install kubernetes packaging
       ##args:
