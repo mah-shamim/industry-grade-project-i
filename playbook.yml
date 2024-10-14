@@ -57,16 +57,16 @@
     - name: Stop existing Docker container if running
       docker_container:
           name: "{{ container_name }}"
-          state: absent
+          state: stopped
           docker_host: "{{ docker_host }}"
-      ignore_errors: true
+      #ignore_errors: true
 
     - name: Remove existing Docker container if exists
       docker_container:
         name: "{{ container_name }}"
         state: absent
         docker_host: "{{ docker_host }}"
-      ignore_errors: true
+      #ignore_errors: true
 
     - name: Run Docker Container
       docker_container:
