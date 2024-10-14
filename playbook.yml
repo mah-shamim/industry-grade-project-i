@@ -9,7 +9,7 @@
     image_name: "mahshamim/abstechnologies_ansible"
     docker_username: "mahshamim"
     docker_password: "01614747054@R!f"
-    kubeconfig_path: ~/.kube/config
+    kubeconfig_path: '/home/ubuntu/.kube/config'
     deployment_file: deployment.yml
     service_file: service.yaml
     namespace: "abc-technologies-ansible" # Add your desired namespace here
