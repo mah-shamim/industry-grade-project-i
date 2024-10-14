@@ -3,7 +3,7 @@
   become_method: sudo
   become_user: root
   vars:
-    ansible_python_interpreter: ~/k8s-ansible-venv/bin/python
+    ansible_python_interpreter: /home/ubuntu/k8s-ansible-venv/bin/python
     docker_tag: "v4.0"  # Change this to any tag you want
     container_name: "abctechnologies_ansible"
     image_name: "mahshamim/abstechnologies_ansible"
@@ -13,6 +13,9 @@
     deployment_file: deployment.yml
     service_file: service.yaml
   tasks:
+    - name: Use Python from virtual environment
+      ansible.builtin.shell: source /home/ubuntu/k8s-ansible-venv/bin/activate && pip install kubernetes
+
     - name: Check Python Kubernetes module
       pip:
         name: kubernetes
