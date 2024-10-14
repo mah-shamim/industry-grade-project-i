@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: abstechnologies-ansible-deployment
-  namespace: abc-technologies_ansible  # Add your desired namespace here
+  namespace: abc-technologies-ansible  # Add your desired namespace here
 spec:
   replicas: 2
   selector:

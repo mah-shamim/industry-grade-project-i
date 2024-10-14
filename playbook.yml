@@ -12,7 +12,7 @@
     kubeconfig_path: ~/.kube/config
     deployment_file: deployment.yml
     service_file: service.yaml
-    namespace: abc-technologies_ansible" # Add your desired namespace here
+    namespace: abc-technologies-ansible" # Add your desired namespace here
   tasks:
     - name: Use Python from virtual environment
       ansible.builtin.shell: |
