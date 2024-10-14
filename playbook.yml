@@ -4,8 +4,8 @@
   become_user: root
   vars:
     docker_tag: "v4.0"  # Change this to any tag you want
-    container_name: "abctechnologies"
-    image_name: "mahshamim/abstechnologies"
+    container_name: "abctechnologies-ansible"
+    image_name: "mahshamim/abstechnologies-ansible"
     docker_username: "mahshamim"
     docker_password: "01614747054@R!f"
     kubeconfig_path: ~/.kube/config
