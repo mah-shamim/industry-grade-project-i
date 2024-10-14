@@ -77,13 +77,13 @@
       command: docker push "{{ image_name }}:{{ docker_tag }}"
 
     - name: Apply Kubernetes Deployment
-      #ansible.builtin.k8s:
-        #state: present
-        #kubeconfig: "{{ kubeconfig_path }}"
-        #definition: "{{ lookup('file', deployment_file) }}"
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: "{{ kubeconfig_path }}"
+        definition: "{{ lookup('file', deployment_file) }}"
 
     - name: Apply Kubernetes Service
-      #ansible.builtin.k8s:
-        #state: present
-        #kubeconfig: "{{ kubeconfig_path }}"
-        #definition: "{{ lookup('file', service_file) }}"
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: "{{ kubeconfig_path }}"
+        definition: "{{ lookup('file', service_file) }}"
