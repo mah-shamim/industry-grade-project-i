@@ -3,31 +3,15 @@
   become_method: sudo
   become_user: root
   vars:
-    #ansible_python_interpreter: /home/ubuntu/k8s-ansible-venv/bin/python
     docker_tag: "v4.0"  # Change this to any tag you want
     container_name: "abctechnologies_ansible"
     image_name: "mahshamim/abstechnologies_ansible"
     docker_username: "mahshamim"
     docker_password: "01614747054@R!f"
     kubeconfig_path: ~/.kube/config
-    deployment_file: deployment.yml
-    service_file: service.yaml
-    namespace: "abc-technologies-ansible" # Add your desired namespace here
-    docker_host: "unix:///var/run/docker.sock"
+    deployment_file: /home/ubuntu/industry-grade-project-i/k8s_deployments/deployment.yml
+    service_file: /home/ubuntu/industry-grade-project-i/k8s_deployments/service.yaml
   tasks:
-    #- name: Use Python from virtual environment
-      #ansible.builtin.shell: |
-        #source /home/ubuntu/k8s-ansible-venv/bin/activate && pip install kubernetes packaging
-      #args:
-        #executable: /bin/bash
-
-    #- name: Check Python Kubernetes module
-      #ansible.builtin.command: /home/ubuntu/k8s-ansible-venv/bin/python -c "import kubernetes"
-
-    #- name: List installed packages
-      #ansible.builtin.command: /home/ubuntu/k8s-ansible-venv/bin/pip list
-
-
     - name: Check if Docker is already installed
       command: docker --version
       register: docker_installed
@@ -84,24 +68,14 @@
     - name: Push Docker image to Docker Hub
       command: docker push "{{ image_name }}:{{ docker_tag }}"
 
-    - name: Ensure Kubernetes namespace exists
-      kubernetes.core.k8s:
-        name: "{{ namespace }}"
-        state: present
-        kubeconfig: "{{ kubeconfig_path }}"
-        api_version: v1
-        kind: Namespace
-
     - name: Apply Kubernetes Deployment
-      kubernetes.core.k8s:
+      ansible.builtin.k8s:
         state: present
         kubeconfig: "{{ kubeconfig_path }}"
         definition: "{{ lookup('file', deployment_file) }}"
-        namespace: "{{ namespace }}"  # Specify the namespace here
 
     - name: Apply Kubernetes Service
-      kubernetes.core.k8s:
+      ansible.builtin.k8s:
         state: present
         kubeconfig: "{{ kubeconfig_path }}"
         definition: "{{ lookup('file', service_file) }}"
-        namespace: "{{ namespace }}"  # Specify the namespace here

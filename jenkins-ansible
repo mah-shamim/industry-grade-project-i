@@ -3,7 +3,7 @@ pipeline {
     environment {
         DOCKER_CREDENTIALS_ID = 'dockerhub'
         ANSIBLE_PLAYBOOK = 'playbook.yml' // Path to your Ansible playbook
-        ANSIBLE_CREDENTIALS_ID = '/home/ubuntu/lab-test-01.pem' // Jenkins SSH credentials ID
+        #ANSIBLE_CREDENTIALS_ID = '/home/ubuntu/lab-test-01.pem' // Jenkins SSH credentials ID
     }
     stages {
         stage('Code Checkout') {
@@ -15,7 +15,7 @@ pipeline {
             steps {
                 ansiblePlaybook(
                     playbook: "${ANSIBLE_PLAYBOOK}",
-                    credentialsId: "${ANSIBLE_CREDENTIALS_ID}"
+                    #credentialsId: "${ANSIBLE_CREDENTIALS_ID}"
                 )
             }
         }
