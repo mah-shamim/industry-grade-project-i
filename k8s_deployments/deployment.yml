@@ -6,15 +6,15 @@ spec:
   replicas: 2
   selector:
     matchLabels:
-      app: abstechnologies
+      app: abstechnologies-ansible
   template:
     metadata:
       labels:
-        app: abstechnologies
+        app: abstechnologies-ansible
     spec:
       containers:
-        - name: abstechnologies
-          image: mahshamim/abstechnologies:latest
+        - name: abstechnologies-ansible
+          image: mahshamim/abstechnologies-ansible:latest
           ports:
             - containerPort: 8080
           env:
