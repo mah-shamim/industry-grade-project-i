@@ -17,7 +17,7 @@
   tasks:
     - name: Use Python from virtual environment
       ansible.builtin.shell: |
-        source /home/ubuntu/k8s-ansible-venv/bin/activate && pip install kubernetes packaging
+       source /home/ubuntu/k8s-ansible-venv/bin/activate && pip install kubernetes packaging
       args:
       executable: /bin/bash
 
