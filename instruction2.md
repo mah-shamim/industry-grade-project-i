@@ -10,62 +10,72 @@ This guide provides a comprehensive setup for creating a CI/CD pipeline using va
 - Required tools: **Java**, **Maven**, **Git**, **Jenkins**, **Docker**, **Ansible**, **Kubernetes**, **Prometheus**, and **Grafana** pre-installed.
 
 ---
+# **AWS EC2 Setup Guide**
 
-### **1. Setup the AWS EC2 Instance**
+This guide outlines the steps to set up an AWS EC2 instance with necessary tools for continuous integration and deployment using Jenkins, Docker, Ansible, Kubernetes, Prometheus, and Grafana.
 
-#### 1.1 Launch an EC2 Instance:
-- Log in to your AWS account.
-- Navigate to the EC2 dashboard and launch a new instance.
-- Choose **Ubuntu Server 24.04 LTS** as the AMI.
-- Select an instance type (e.g., `t2.micro` for testing).
-- Configure security groups to allow the following ports:
-    - SSH (port 22)
-    - HTTP (port 80)
-    - HTTPS (port 443)
-    - Jenkins (port 8080)
-    - Docker (port 2376)
-    - Grafana (port 3000)
-- Add an SSH key pair for connecting to your instance.
+## **1. Setup the AWS EC2 Instance**
 
-#### 1.2 Connect to the Instance:
-- Open **Terminal (Linux/Mac)** or **Putty (Windows)**.
-- Navigate to the directory where your `.pem` file is saved.
-- Connect using the following command (replace `<key-file>` and `<public-ip>`):
-    ```bash
-    chmod 400 <key-file>.pem
-    ssh -i <key-file>.pem ubuntu@<public-ip>
-    ```
+### **1.1 Launch an EC2 Instance**
+1. **Log in to your AWS account.**
+2. **Navigate to the EC2 dashboard and launch a new instance:**
+   - **Select the AMI:** Choose **Ubuntu Server 24.04 LTS**.
+   - **Select an instance type:** Use `t2.micro` for testing.
+   - **Configure security groups:** Allow the following ports:
+      - **SSH (port 22)**
+      - **HTTP (port 80)**
+      - **HTTPS (port 443)**
+      - **Jenkins (port 8080)**
+      - **Docker (port 2376)**
+      - **Grafana (port 3000)**
+   - **Add an SSH key pair** for connecting to your instance.
 
-#### 1.3 Update and Upgrade Packages:
+   **Screenshot:** Add a screenshot of the EC2 instance configuration.
+
+### **1.2 Connect to the Instance**
+- **Open Terminal (Linux/Mac) or Putty (Windows).**
+- **Navigate to the directory where your `.pem` file is saved.**
+- **Connect using the following command (replace `<key-file>` and `<public-ip>`):**
+   ```bash
+   chmod 400 <key-file>.pem
+   ssh -i <key-file>.pem ubuntu@<public-ip>
+   ```
+
+  **Screenshot:** Add a screenshot of the terminal connection process.
+
+### **1.3 Update and Upgrade Packages**
 ```bash
 sudo apt-get update && sudo apt-get upgrade -y
 ```
 
 ---
 
-### **2. Install Required Tools**
+## **2. Install Required Tools**
 
-#### 2.1 Install Java:
+### **2.1 Install Java**
 Jenkins requires Java to run.
 ```bash
 sudo apt install openjdk-11-jdk -y
 java -version
 ```
+**Screenshot:** Add a screenshot showing Java installation confirmation.
 
-#### 2.2 Install Git:
+### **2.2 Install Git**
 ```bash
 sudo apt-get install git -y
 git --version
 ```
+**Screenshot:** Add a screenshot showing Git installation confirmation.
 
-#### 2.3 Install Maven:
+### **2.3 Install Maven**
 Maven is used to build Java projects.
 ```bash
 sudo apt install maven -y
 mvn -version
 ```
+**Screenshot:** Add a screenshot showing Maven installation confirmation.
 
-#### 2.4 Install Docker:
+### **2.4 Install Docker**
 Docker will containerize the application.
 ```bash
 sudo apt-get install docker.io -y
@@ -73,49 +83,60 @@ sudo systemctl start docker
 sudo systemctl enable docker
 docker --version
 ```
-Add your user to the Docker group:
-```bash
-sudo usermod -aG docker $USER
-```
-Log out and re-login for the group changes to take effect.
+- **Add your user to the Docker group:**
+   ```bash
+   sudo usermod -aG docker $USER
+   ```
+- **Log out and re-login** for the group changes to take effect.
 
-#### 2.5 Install Jenkins:
+**Screenshot:** Add a screenshot showing Docker installation confirmation.
+
+### **2.5 Install Jenkins**
 Jenkins automates builds and deployments.
 ```bash
-#wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
-#sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
-curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | sudo tee   /usr/share/keyrings/jenkins-keyring.asc > /dev/null
-echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/ | sudo tee   /etc/apt/sources.list.d/jenkins.list > /dev/null
+# Add Jenkins key and repository
+curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | sudo tee /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+# Install Jenkins
 sudo apt-get update
 sudo apt-get install jenkins -y
 sudo systemctl start jenkins
 sudo systemctl enable jenkins
 ```
-
-**Permissions and Jenkins Docker Setup**:
+**Permissions and Jenkins Docker Setup:**
 ```bash
-if command_exists docker && command_exists jenkins; then
-    sudo usermod -aG docker jenkins
-    sudo chmod 666 /var/run/docker.sock
-    echo "jenkins ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers.d/jenkins
-fi
+sudo usermod -aG docker jenkins
+sudo chmod 666 /var/run/docker.sock
+echo "jenkins ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers > /dev/null
 ```
 
-- Visit Jenkins on `http://<EC2_PUBLIC_IP>:8080`
-- Get the initial password to unlock Jenkins:
+- **Visit Jenkins** on `http://<EC2_PUBLIC_IP>:8080`
+- **Get the initial password to unlock Jenkins:**
 ```bash
 sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 ```
 
-#### 2.6 Install Ansible:
+**Screenshot:** Add a screenshot of Jenkins setup and initial password retrieval.
+
+### **2.6 Install Ansible**
 Ansible will automate the deployment process.
 ```bash
-sudo apt-get install ansible -y
+sudo apt update && sudo apt upgrade -y
+sudo apt install software-properties-common -y
+
+# Add Ansible PPA and install Ansible
+sudo add-apt-repository ppa:ansible/ansible -y
+sudo apt update
+sudo apt install ansible -y
 
 # Create Ansible hosts file
 mkdir ~/ansible
 sudo tee ~/ansible/hosts > /dev/null <<EOL
-[local]
+[localhost]
+localhost ansible_connection=local
+
+[k8s]
 localhost ansible_connection=local
 EOL
 
@@ -126,34 +147,103 @@ inventory = ./inventory
 
 [privilege_escalation]
 become = true
-become_method = sudo
 EOL
+
+# Verify Ansible installation
 ansible --version
+
+# Install the community.docker collection
+ansible-galaxy collection install community.docker kubernetes.core --force
+
+# Install boto3 and botocore (Python libraries for AWS)
+sudo apt-get update
+sudo apt-get install build-essential libssl-dev libffi-dev python3-dev
+
+# Create a Virtual Environment
+sudo -u ubuntu python3 -m venv /home/ubuntu/k8s-ansible-venv
+source /home/ubuntu/k8s-ansible-venv/bin/activate
+
+sudo apt install python3-pip python3.12-venv -y
+pip3 install boto3 botocore docker dockerpty kubernetes
+
+pip show kubernetes
+pip show docker
+deactivate
+
+sudo -u jenkins python3 -m venv /home/jenkins/k8s-ansible-venv
+source /home/jenkins/k8s-ansible-venv/bin/activate
+
+apt install python3-pip python3.12-venv -y
+pip3 install boto3 botocore docker dockerpty kubernetes
+
+pip show kubernetes
+pip show docker
+deactivate
+
 ```
 
-**Add Remote Hosts to Inventory**:
+**Screenshot:** Add a screenshot showing Ansible installation confirmation.
+
+### **2.7 Add Remote Hosts to Inventory**
 Edit the `~/ansible/hosts` file to include your remote servers:
 ```bash
 [webservers]
 remote-server-ip ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/your-key.pem
 ```
 
-#### 2.7 Install Kubernetes Tools:
+### **2.8 Install Kubernetes Tools**
 Install *kubectl* and *minikube*:
 ```bash
+# Install kubectl
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 chmod +x kubectl
 sudo mv kubectl /usr/local/bin/
 
+# Install minikube
 curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
 chmod +x minikube-linux-amd64
 sudo mv minikube-linux-amd64 /usr/local/bin/minikube
 
+# Start minikube
 minikube start
 ```
 
-#### 2.8 Install Prometheus & Grafana:
-##### 2.8.1 Install Prometheus:
+**The Jenkins user, ensuring that Jenkins has the necessary permissions and access to the Kubernetes cluster**
+```bash
+# Set permissions for Kubernetes config
+#sudo chown jenkins:jenkins ~/.kube/config
+#sudo chmod 600 ~/.kube/config
+
+#Create Kubernetes Directory for Jenkins
+sudo mkdir -p /var/lib/jenkins/.kube
+sudo cp /home/ubuntu/.kube/config /var/lib/jenkins/.kube/
+sudo -u jenkins export KUBECONFIG=/home/ubuntu/.kube/config
+sudo chown -R jenkins:jenkins /var/lib/jenkins/.kube
+
+# Create the Kubernetes configuration directory if it doesn't exist
+sudo mkdir -p /var/lib/jenkins/.minikube/profiles/minikube
+sudo cp -r /home/ubuntu/.minikube/profiles/minikube/* /var/lib/jenkins/.minikube/profiles/minikube/
+sudo cp /home/ubuntu/.minikube/ca.crt /var/lib/jenkins/.minikube/
+sudo chown -R jenkins:jenkins /var/lib/jenkins/.minikube
+
+# Write the Kubernetes config to /var/lib/jenkins/.kube/config
+# Use sed to update the specific lines in the config file
+sudo sed -i "s|certificate-authority: .*|certificate-authority: /var/lib/jenkins/.minikube/ca.crt|" /var/lib/jenkins/.kube/config
+sudo sed -i "s|client-certificate: .*|client-certificate: /var/lib/jenkins/.minikube/profiles/minikube/client.crt|" /var/lib/jenkins/.kube/config
+sudo sed -i "s|client-key: .*|client-key: /var/lib/jenkins/.minikube/profiles/minikube/client.key|" /var/lib/jenkins/.kube/config
+
+#Set the KUBECONFIG Environment Variable
+#export KUBECONFIG=/home/ubuntu/.kube/config
+
+#View Raw Kubernetes Configuration
+#kubectl config view --raw > /tmp/kubeconfig
+```
+
+**Screenshot:** Add a screenshot showing Kubernetes installation confirmation.
+
+### **2.9 Install Prometheus & Grafana**
+
+#### **2.9.1 Install Prometheus**
 ```bash
 wget https://github.com/prometheus/prometheus/releases/download/v2.40.3/prometheus-2.40.3.linux-amd64.tar.gz
 tar -xvzf prometheus-2.40.3.linux-amd64.tar.gz
@@ -161,17 +251,22 @@ cd prometheus-2.40.3.linux-amd64/
 ./prometheus --config.file=prometheus.yml
 ```
 
-##### 2.8.2 Install Grafana:
+**Screenshot:** Add a screenshot showing Prometheus installation confirmation.
+
+#### **2.9.2 Install Grafana**
 ```bash
 sudo apt-get install -y software-properties-common
-sudo add-apt-repository "deb https://packages.grafana.com/oss/deb stable main"
+curl https://packages.grafana.com/gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/grafana-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/grafana-archive-keyring.gpg] https://packages.grafana.com/oss/deb stable main" | sudo tee /etc/apt/sources.list.d/grafana.list
 sudo apt-get update
 sudo apt-get install grafana -y
 sudo systemctl start grafana-server
 sudo systemctl enable grafana-server
 ```
 
-- Access Grafana at `http://<EC2_PUBLIC_IP>:3000` (default login: *admin/admin*).
+- **Access Grafana at** `http://<EC2_PUBLIC_IP>:3000` (default login: *admin/admin*).
+
+**Screenshot:** Add a screenshot showing Grafana login page.
 
 ---
 
@@ -190,6 +285,7 @@ cd industry-grade-project-i
     - Docker Plugin
     - Ansible Plugin
     - Kubernetes Plugin
+    - SSH Agent Plugin
 3. **Integrate GitHub with Jenkins**:
     - Add GitHub credentials:
         - Go to Jenkins Dashboard > Manage Jenkins > Manage Credentials.
@@ -207,6 +303,22 @@ cd industry-grade-project-i
     - Go to Manage Jenkins > Manage Plugins > Available.
     - Search for "Docker" and install the "Docker" and "Docker Pipeline" plugins.
     - Restart Jenkins if prompted.
+6. **Set up a new Jenkins pipeline**:
+   - Create Docker Hub Credentials:
+      - Go to Jenkins Dashboard > Manage Jenkins > Manage Credentials.
+      - Add a new set of credentials with:
+         - In the Kind dropdown, select "SSH Username with private key".
+         - Username: Enter the SSH username that you use to access your Kubernetes master node (e.g., ubuntu, ec2-user, etc.).
+         - Private Key: Select "Enter directly".
+         - **Private Key Content**: Paste the content of your **private SSH key** (`.pem` or other SSH private key).
+           - If you are using a `.pem` file for AWS EC2 instances, open the file in a text editor and copy its content.
+           - For example, you can use the following command to view and copy the content of the key:
+
+             ```bash
+             cat /path/to/your-key.pem
+             ```
+         - **ID**: Recognizable ID like `authorized_keys`.
+         - **Description**: (Optional) Add a description for the SSH key for easier identification.
 
 #### 3.3 Create a Freestyle Job for Each Task:
 - **Compile Job**: Uses Maven to compile the code.
@@ -241,6 +353,7 @@ pipeline {
         DOCKER_REGISTRY = 'https://index.docker.io/v1/' // For DockerHub
         CONTAINER_NAME = "abctechnologies"
         DOCKER_TAG = "${BUILD_ID}"  // Use the BUILD_ID as the tag
+        CONTAINER_PORT = "9191"  // Use the BUILD_ID as the tag
     }
     stages {
         stage('Code Checkout') {
@@ -284,6 +397,34 @@ pipeline {
                 }
             }
         }
+        stage('Stopping and removing existing container...')
+		{
+			steps {
+                script {
+                    def containerExists = sh(
+                        script: "docker ps -a --filter name=${CONTAINER_NAME} --format '{{.Names}}' | grep -w ${CONTAINER_NAME}",
+                        returnStatus: true
+                    )
+                    
+                    if (containerExists == 0) {
+                        echo "Container ${CONTAINER_NAME} exists."
+                        // You can stop or remove the container if needed:
+                        sh "docker stop ${CONTAINER_NAME}"
+                        sh "docker rm ${CONTAINER_NAME}"
+                    } else {
+                        echo "Container ${CONTAINER_NAME} does not exist."
+                    }
+                }
+            }
+		}
+        stage('Deploy as container')
+		{
+			steps
+			{
+				sh 'docker run -d -p ${CONTAINER_PORT}:8080 --name $CONTAINER_NAME ${DOCKER_IMAGE}:${DOCKER_TAG} || { echo "Failed to start Docker container! Exiting."; exit 1; }'
+			}
+		}
+
     }
     post {
         always {
@@ -294,77 +435,139 @@ pipeline {
 ```
 
 #### 3.7 Configure Deployment Using Ansible:
+
+Set environment variables: Before running your Ansible playbook, set your Docker Hub credentials as environment variables in your shell:
+```bash
+export DOCKER_USERNAME="mahshamim" # your dockerhub username
+export DOCKER_PASSWORD="01614747054@R!f" # your dockerhub password 
+
+```
 Create an Ansible playbook for deployment:
 ```yaml
----
 - hosts: localhost
   become: yes
   become_method: sudo
   become_user: root
   vars:
-    docker_tag: "v1.0"  # Change this to any tag you want
-    container_name: "abctechnologies"
-    image_name: "mahshamim/abstechnologies"
-    docker_username: "mahshamim"
-    docker_password: "01614747054@R!f"
+     ansible_python_interpreter: /home/ubuntu/k8s-ansible-venv/bin/python
+     docker_tag: "latest"  # Change this to any tag you want
+     container_name: "abctechnologies-ansible"
+     image_name: "mahshamim/abstechnologies-ansible"
+     docker_username: "{{ lookup('env', 'DOCKER_USERNAME') }}"
+     docker_password: "{{ lookup('env', 'DOCKER_PASSWORD') }}"
+     kubeconfig_path: '/var/lib/jenkins/.kube/config' #~/.kube/config
+     deployment_file: './k8s_deployments/deployment.yml'
+     service_file: './k8s_deployments/service.yaml'
+     namespace: "abc-technologies-ansible" # Add your desired namespace here
+     docker_host: "unix:///var/run/docker.sock"
   tasks:
-    - name: Check if Docker is already installed
-      command: docker --version
-      register: docker_installed
-      ignore_errors: true
+     - name: Log in to Docker Hub
+       command: echo "{{ docker_password }}" | docker login -u "{{ docker_username }}" --password-stdin
 
-    - name: Install Docker
-      apt:
-        name: docker.io
-        state: present
-      when: docker_installed.rc != 0
+     - name: Use Python from virtual environment
+       ansible.builtin.command: /home/ubuntu/k8s-ansible-venv/bin/pip install kubernetes packaging
 
-    - name: Start Docker Service
-      service:
-        name: docker
-        state: started
-        enabled: true
+     - name: Check Python Kubernetes module
+       ansible.builtin.command: /home/ubuntu/k8s-ansible-venv/bin/python -c "import kubernetes"
 
-    - name: Build WAR file using Maven (if applicable)
-      command: mvn clean package
-      args:
-        chdir: ./
-      when: docker_installed.rc == 0  # Run only if Docker is installed
+     - name: List installed packages
+       ansible.builtin.command: /home/ubuntu/k8s-ansible-venv/bin/pip list
 
-    - name: Build Docker Image
-      command: docker build -t {{ image_name }} .
 
-    - name: Stop existing Docker container if running
-      command: docker stop {{ container_name }}
-      ignore_errors: true
+     - name: Check if Docker is already installed
+       command: docker --version
+       register: docker_installed
+       ignore_errors: true
 
-    - name: Remove existing Docker container if exists
-      command: docker rm {{ container_name }}
-      ignore_errors: true
+     - name: Install Docker
+       apt:
+          name: docker.io
+          state: present
+       when: docker_installed.rc != 0
 
-    - name: Run Docker Container
-      command: docker run -d --name {{ container_name }} -p 9292:8080 {{ image_name }}
+     - name: Start Docker Service
+       service:
+          name: docker
+          state: started
+          enabled: true
 
-    - name: Log in to Docker Hub
-      command: docker login -u "{{ docker_username }}" -p "{{ docker_password }}"
-      no_log: true
+     - name: Build WAR file using Maven (if applicable)
+       command: mvn clean package
+       args:
+          chdir: ./
+       when: docker_installed.rc == 0  # Run only if Docker is installed
 
-    - name: Tag Docker image for Docker Hub
-      command: docker tag {{ image_name }} "{{ image_name }}:{{ docker_tag }}"
+     - name: Build Docker Image
+       command: docker build -t {{ image_name }} .
 
-    - name: Push Docker image to Docker Hub
-      command: docker push "{{ image_name }}:{{ docker_tag }}"
+     - name: Stop existing Docker container if running
+       docker_container:
+          name: "{{ container_name }}"
+          state: absent
+       ignore_errors: true
+
+     - name: Remove existing Docker container if exists
+       docker_container:
+          name: "{{ container_name }}"
+          state: absent
+       ignore_errors: true
+
+     - name: Run Docker Container
+       docker_container:
+          name: "{{ container_name }}"
+          image: "{{ image_name }}"
+          state: started
+          published_ports:
+             - "9292:8080"
+
+     - name: Log in to Docker Hub
+        #command: docker login -u "{{ docker_username }}" -p "{{ docker_password }}"
+       command: echo "{{ docker_password }}" | docker login -u "{{ docker_username }}" --password-stdin
+       no_log: true
+
+     - name: Tag Docker image for Docker Hub
+       command: docker tag {{ image_name }} "{{ image_name }}:{{ docker_tag }}"
+
+     - name: Push Docker image to Docker Hub
+       command: docker push "{{ image_name }}:{{ docker_tag }}"
+
+     - name: Ensure Kubernetes namespace exists
+       kubernetes.core.k8s:
+          name: "{{ namespace }}"
+          state: present
+          kubeconfig: "{{ kubeconfig_path }}"
+          api_version: v1
+          kind: Namespace
+
+     - name: Apply Kubernetes Deployment
+       kubernetes.core.k8s:
+          state: present
+          kubeconfig: "{{ kubeconfig_path }}"
+          definition: "{{ lookup('file', deployment_file) }}"
+          namespace: "{{ namespace }}"  # Specify the namespace here
+
+     - name: Apply Kubernetes Service
+       kubernetes.core.k8s:
+          state: present
+          kubeconfig: "{{ kubeconfig_path }}"
+          definition: "{{ lookup('file', service_file) }}"
+          namespace: "{{ namespace }}"  # Specify the namespace here
 ```
 
 **Test the Ansible Playbook:** Run the following command to execute the playbook:
 ```bash
 cd industry-grade-project-i
-ansible-playbook playbook.yml
+ansible-playbook path/to/your/playbook.yml
 ```
 OR
 ```bash
 cd industry-grade-project-i
-ansible-playbook -i inventory.ini playbook.yml --become
+ansible-playbook -i inventory.ini path/to/your/playbook.yml --become
+```
+
+**Check Project**
+```html
+<domain or ip>:<port>/ABCtechnologies-1.0/
 ```
 #### 3.8 Deploy Artifacts to Kubernetes
 3.8.1. **Kubernetes Deployment Manifest**:
@@ -453,7 +656,7 @@ kubectl proxy --port=8001
 Now, on your local machine, open the following URL in your web browser:
 
 
-http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/
+http://127.0.0.1:8001/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/
 
 
 This should bring up the Kubernetes dashboard.
@@ -467,6 +670,7 @@ kubectl -n kubernetes-dashboard create token admin-user
 
 Copy the token and use it for logging into the dashboard.
 
+### 3.8.11. *Kubernetes cluster using an Ansible playbook*
 
 
 ### **4. Set Up Monitoring with Prometheus and Grafana**
