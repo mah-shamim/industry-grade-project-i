@@ -7,19 +7,14 @@
     docker_tag: "latest"  # Change this to any tag you want
     container_name: "abctechnologies-ansible"
     image_name: "mahshamim/abstechnologies-ansible"
-    docker_username: "mahshamim"
-    docker_password: "01614747054@R!f"
+    docker_username: "{{ lookup('env', 'DOCKER_USERNAME') }}"
+    docker_password: "{{ lookup('env', 'DOCKER_PASSWORD') }}"
     kubeconfig_path: '/var/lib/jenkins/.kube/config' #~/.kube/config
-    deployment_file: deployment.yml
-    service_file: service.yaml
+    deployment_file: '/k8s_deployments/deployment.yml'
+    service_file: '/k8s_deployments/service.yaml'
     namespace: "abc-technologies-ansible" # Add your desired namespace here
     docker_host: "unix:///var/run/docker.sock"
   tasks:
-      #- name: Use Python from virtual environment
-      #ansible.builtin.shell: |
-      #source /home/ubuntu/k8s-ansible-venv/bin/activate && pip install kubernetes packaging
-      ##args:
-      #executable: /bin/bash
     - name: Use Python from virtual environment
       ansible.builtin.command: /home/ubuntu/k8s-ansible-venv/bin/pip install kubernetes packaging
 
