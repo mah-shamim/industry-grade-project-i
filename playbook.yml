@@ -4,7 +4,7 @@
   become_user: root
   vars:
     ansible_python_interpreter: /home/ubuntu/k8s-ansible-venv/bin/python
-    docker_tag: "latest"  # Change this to any tag you want
+    docker_tag: "v1.0"  # Change this to any tag you want
     container_name: "abctechnologies_ansible"
     image_name: "mahshamim/abstechnologies_ansible"
     docker_username: "mahshamim"
