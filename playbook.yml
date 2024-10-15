@@ -10,8 +10,8 @@
     docker_username: "{{ lookup('env', 'DOCKER_USERNAME') }}"
     docker_password: "{{ lookup('env', 'DOCKER_PASSWORD') }}"
     kubeconfig_path: '/var/lib/jenkins/.kube/config' #~/.kube/config
-    deployment_file: '/k8s_deployments/deployment.yml'
-    service_file: '/k8s_deployments/service.yaml'
+    deployment_file: './k8s_deployments/deployment.yml'
+    service_file: './k8s_deployments/service.yaml'
     namespace: "abc-technologies-ansible" # Add your desired namespace here
     docker_host: "unix:///var/run/docker.sock"
   tasks:
