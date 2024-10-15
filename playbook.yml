@@ -15,34 +15,6 @@
     namespace: "abc-technologies-ansible" # Add your desired namespace here
     docker_host: "unix:///var/run/docker.sock"
   tasks:
-    - name: Install required packages
-      apt:
-        name:
-          - curl
-          - apt-transport-https
-          - ca-certificates
-          - software-properties-common
-        state: present
-      become: true
-
-    - name: Set KUBECONFIG variable
-      set_fact:
-        kubecfg: /home/{{ ansible_user }}/.kube/config
-
-    - name: Ensure .kube directory exists
-      file:
-        path: /home/{{ ansible_user }}/.kube
-        state: directory
-        owner: { { ansible_user } }
-        mode: '0755'
-
-    - name: Copy Kubeconfig to remote machine
-      copy:
-        src: /home/{{ ansible_user }}/.kube/config
-        dest: /home/{{ ansible_user }}/.kube/config
-        owner: { { ansible_user } }
-        mode: '0644'
-
       #- name: Use Python from virtual environment
       #ansible.builtin.shell: |
       #source /home/ubuntu/k8s-ansible-venv/bin/activate && pip install kubernetes packaging
