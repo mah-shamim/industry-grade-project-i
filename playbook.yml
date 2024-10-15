@@ -5,8 +5,8 @@
   vars:
     ansible_python_interpreter: /home/ubuntu/k8s-ansible-venv/bin/python
     docker_tag: "latest"  # Change this to any tag you want
-    container_name: "abctechnologies_ansible"
-    image_name: "mahshamim/abstechnologies_ansible"
+    container_name: "abctechnologies-ansible"
+    image_name: "mahshamim/abstechnologies-ansible"
     docker_username: "mahshamim"
     docker_password: "01614747054@R!f"
     kubeconfig_path: '/home/ubuntu/.kube/config'
