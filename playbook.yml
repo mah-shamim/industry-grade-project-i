@@ -17,7 +17,7 @@
   tasks:
     - name: Log in to Docker Hub
       command: echo "{{ docker_password }}" | docker login -u "{{ docker_username }}" --password-stdin
-      
+
     - name: Use Python from virtual environment
       ansible.builtin.command: /home/ubuntu/k8s-ansible-venv/bin/pip install kubernetes packaging
 
@@ -75,7 +75,8 @@
           - "9292:8080"
 
     - name: Log in to Docker Hub
-      command: docker login -u "{{ docker_username }}" -p "{{ docker_password }}"
+      #command: docker login -u "{{ docker_username }}" -p "{{ docker_password }}"
+      command: echo "{{ docker_password }}" | docker login -u "{{ docker_username }}" --password-stdin
       no_log: true
 
     - name: Tag Docker image for Docker Hub
