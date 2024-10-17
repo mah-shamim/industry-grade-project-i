@@ -16,6 +16,10 @@
     namespace: "abc-technologies-ansible" # Add your desired namespace here
     docker_host: "unix:///var/run/docker.sock"
   tasks:
+    - name: Debug kubeconfig path
+      debug:
+        msg: "Kubeconfig path is {{ kubeconfig_path }}"
+        
     - name: Log in to Docker Hub
       command: echo "{{ docker_password }}" | docker login -u "{{ docker_username }}" --password-stdin
 
