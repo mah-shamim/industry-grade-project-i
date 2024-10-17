@@ -3,7 +3,8 @@ pipeline {
     environment {
         DOCKER_CREDENTIALS_ID = 'dockerhub'
         ANSIBLE_PLAYBOOK = 'playbook.yml' // Path to your Ansible playbook
-        KUBECONFIG = '/home/ubuntu/.kube/config'
+        // Use the full path instead of ~
+        KUBECONFIG = '/var/lib/jenkins/.kube/config'
     }
     stages {
         stage('Code Checkout') {
@@ -16,7 +17,9 @@ pipeline {
                 script {
                     // Use the withCredentials block to inject Docker Hub credentials
                     withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-                        sh 'ansible-playbook -i ~/ansible/inventory.ini playbook.yml --become'
+                        withEnv(['KUBECONFIG_PATH=/var/lib/jenkins/.kube/config']) {
+                            sh 'ansible-playbook -i ~/ansible/inventory.ini playbook.yml --become'
+                        }
                     }
                 }
             }

@@ -31,6 +31,8 @@ This guide outlines the steps to set up an AWS EC2 instance with necessary tools
    - **Add an SSH key pair** for connecting to your instance.
 
    **Screenshot:** Add a screenshot of the EC2 instance configuration.
+   ![screenshot of the EC2 instance configuration](./images/ec2.png)
+
 
 ### **1.2 Connect to the Instance**
 - **Open Terminal (Linux/Mac) or Putty (Windows).**
@@ -42,6 +44,7 @@ This guide outlines the steps to set up an AWS EC2 instance with necessary tools
    ```
 
   **Screenshot:** Add a screenshot of the terminal connection process.
+  ![screenshot of the terminal connection process](./images/ec2.png)
 
 ### **1.3 Update and Upgrade Packages**
 ```bash
@@ -59,6 +62,7 @@ sudo apt install openjdk-11-jdk -y
 java -version
 ```
 **Screenshot:** Add a screenshot showing Java installation confirmation.
+![screenshot showing Java installation confirmation](./images/ec2.png)
 
 ### **2.2 Install Git**
 ```bash
@@ -66,6 +70,7 @@ sudo apt-get install git -y
 git --version
 ```
 **Screenshot:** Add a screenshot showing Git installation confirmation.
+![screenshot showing Java installation confirmation](./images/ec2.png)
 
 ### **2.3 Install Maven**
 Maven is used to build Java projects.
@@ -74,6 +79,7 @@ sudo apt install maven -y
 mvn -version
 ```
 **Screenshot:** Add a screenshot showing Maven installation confirmation.
+![screenshot showing Java installation confirmation](./images/ec2.png)
 
 ### **2.4 Install Docker**
 Docker will containerize the application.
@@ -84,12 +90,14 @@ sudo systemctl enable docker
 docker --version
 ```
 - **Add your user to the Docker group:**
-   ```bash
-   sudo usermod -aG docker $USER
-   ```
+```bash
+#sudo groupadd docker
+sudo usermod -aG docker $USER
+```
 - **Log out and re-login** for the group changes to take effect.
 
 **Screenshot:** Add a screenshot showing Docker installation confirmation.
+![screenshot showing Java installation confirmation](./images/ec2.png)
 
 ### **2.5 Install Jenkins**
 Jenkins automates builds and deployments.
@@ -118,6 +126,7 @@ sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 ```
 
 **Screenshot:** Add a screenshot of Jenkins setup and initial password retrieval.
+![screenshot showing Java installation confirmation](./images/ec2.png)
 
 ### **2.6 Install Ansible**
 Ansible will automate the deployment process.
@@ -159,21 +168,12 @@ ansible-galaxy collection install community.docker kubernetes.core --force
 sudo apt-get update
 sudo apt-get install build-essential libssl-dev libffi-dev python3-dev
 
+sudo apt install python3-pip python3.12-venv -y
+
 # Create a Virtual Environment
 sudo -u ubuntu python3 -m venv /home/ubuntu/k8s-ansible-venv
 source /home/ubuntu/k8s-ansible-venv/bin/activate
 
-sudo apt install python3-pip python3.12-venv -y
-pip3 install boto3 botocore docker dockerpty kubernetes
-
-pip show kubernetes
-pip show docker
-deactivate
-
-sudo -u jenkins python3 -m venv /home/jenkins/k8s-ansible-venv
-source /home/jenkins/k8s-ansible-venv/bin/activate
-
-apt install python3-pip python3.12-venv -y
 pip3 install boto3 botocore docker dockerpty kubernetes
 
 pip show kubernetes
@@ -183,6 +183,7 @@ deactivate
 ```
 
 **Screenshot:** Add a screenshot showing Ansible installation confirmation.
+![screenshot showing Java installation confirmation](./images/ec2.png)
 
 ### **2.7 Add Remote Hosts to Inventory**
 Edit the `~/ansible/hosts` file to include your remote servers:
@@ -202,10 +203,19 @@ sudo mv kubectl /usr/local/bin/
 # Install minikube
 curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
 chmod +x minikube-linux-amd64
-sudo mv minikube-linux-amd64 /usr/local/bin/minikube
+sudo cp minikube-linux-amd64 /usr/local/bin/minikube
 
 # Start minikube
 minikube start
+
+# Set permissions for Kubernetes config
+chmod -R 777 /home/ubuntu/.kube/config 
+chmod -R 777 /home/ubuntu/.minikube/ca.crt
+chmod -R 777 /home/ubuntu/.minikube/profiles/minikube/client.crt
+chmod -R 777 /home/ubuntu/.minikube/profiles/minikube/client.key
+
+# Set environment path for Kubernetes config
+export KUBECONFIG_PATH='/home/ubuntu/.kube/config'
 ```
 
 **The Jenkins user, ensuring that Jenkins has the necessary permissions and access to the Kubernetes cluster**
@@ -217,7 +227,8 @@ minikube start
 #Create Kubernetes Directory for Jenkins
 sudo mkdir -p /var/lib/jenkins/.kube
 sudo cp /home/ubuntu/.kube/config /var/lib/jenkins/.kube/
-sudo -u jenkins export KUBECONFIG=/home/ubuntu/.kube/config
+sudo -u jenkins bash -c "echo 'export KUBECONFIG=var/lib/jenkins/.kube/config' >> ~/.bashrc"
+sudo -u jenkins bash -c "source ~/.bashrc"
 sudo chown -R jenkins:jenkins /var/lib/jenkins/.kube
 
 # Create the Kubernetes configuration directory if it doesn't exist
@@ -240,6 +251,7 @@ sudo sed -i "s|client-key: .*|client-key: /var/lib/jenkins/.minikube/profiles/mi
 ```
 
 **Screenshot:** Add a screenshot showing Kubernetes installation confirmation.
+![screenshot showing Java installation confirmation](./images/ec2.png)
 
 ### **2.9 Install Prometheus & Grafana**
 
@@ -252,6 +264,7 @@ cd prometheus-2.40.3.linux-amd64/
 ```
 
 **Screenshot:** Add a screenshot showing Prometheus installation confirmation.
+![screenshot showing Java installation confirmation](./images/ec2.png)
 
 #### **2.9.2 Install Grafana**
 ```bash
@@ -267,6 +280,7 @@ sudo systemctl enable grafana-server
 - **Access Grafana at** `http://<EC2_PUBLIC_IP>:3000` (default login: *admin/admin*).
 
 **Screenshot:** Add a screenshot showing Grafana login page.
+![screenshot showing Java installation confirmation](./images/ec2.png)
 
 ---
 
@@ -282,29 +296,31 @@ cd industry-grade-project-i
 #### 3.2 Create Jenkins Pipeline:
 1. **Login to Jenkins** (`http://<EC2_PUBLIC_IP>:8080`).
 2. Install required plugins:
+   - Go to Manage Jenkins > Manage Plugins > Available. and search for
     - Docker Plugin
+    - Docker Pipeline Plugin
     - Ansible Plugin
     - Kubernetes Plugin
     - SSH Agent Plugin
+    - Restart Jenkins if prompted.
+       ![screenshot showing Java installation confirmation](./images/ec2.png)
 3. **Integrate GitHub with Jenkins**:
     - Add GitHub credentials:
         - Go to Jenkins Dashboard > Manage Jenkins > Manage Credentials.
         - Add a new set of credentials with:
             - Secret Text: Your GitHub Personal Access Key.
-            - ID: Recognizable ID like `github`.
+            - ID: Recognizable ID like `github`.\
+              ![screenshot showing Java installation confirmation](./images/ec2.png)
 4. **Set up a new Jenkins pipeline**:
     - Create Docker Hub Credentials:
         - Go to Jenkins Dashboard > Manage Jenkins > Manage Credentials.
         - Add a new set of credentials with:
             - Username: Your Docker Hub username.
             - Password: Your Docker Hub password or access token.
-            - ID: Recognizable ID like `dockerhub`.
-5. **Install Docker Plugin in Jenkins**:
-    - Go to Manage Jenkins > Manage Plugins > Available.
-    - Search for "Docker" and install the "Docker" and "Docker Pipeline" plugins.
-    - Restart Jenkins if prompted.
-6. **Set up a new Jenkins pipeline**:
-   - Create Docker Hub Credentials:
+            - ID: Recognizable ID like `dockerhub`.\
+              ![screenshot showing Java installation confirmation](./images/ec2.png)
+5. **Set up a new Jenkins pipeline**:
+   - Create SSH Agent Credentials:
       - Go to Jenkins Dashboard > Manage Jenkins > Manage Credentials.
       - Add a new set of credentials with:
          - In the Kind dropdown, select "SSH Username with private key".
@@ -318,7 +334,8 @@ cd industry-grade-project-i
              cat /path/to/your-key.pem
              ```
          - **ID**: Recognizable ID like `authorized_keys`.
-         - **Description**: (Optional) Add a description for the SSH key for easier identification.
+         - **Description**: (Optional) Add a description for the SSH key for easier identification.\
+           ![screenshot showing Java installation confirmation](./images/ec2.png)
 
 #### 3.3 Create a Freestyle Job for Each Task:
 - **Compile Job**: Uses Maven to compile the code.
@@ -397,26 +414,24 @@ pipeline {
                 }
             }
         }
-        stage('Stopping and removing existing container...')
-		{
-			steps {
+        stage('Stopping and removing existing container...') {
+            steps {
                 script {
                     def containerExists = sh(
-                        script: "docker ps -a --filter name=${CONTAINER_NAME} --format '{{.Names}}' | grep -w ${CONTAINER_NAME}",
+                        script: "docker inspect -f '{{.State.Running}}' ${CONTAINER_NAME}",
                         returnStatus: true
                     )
                     
                     if (containerExists == 0) {
-                        echo "Container ${CONTAINER_NAME} exists."
-                        // You can stop or remove the container if needed:
-                        sh "docker stop ${CONTAINER_NAME}"
+                        echo "Container ${CONTAINER_NAME} exists. Stopping and removing..."
+                        sh "docker stop ${CONTAINER_NAME} || true"
                         sh "docker rm ${CONTAINER_NAME}"
                     } else {
-                        echo "Container ${CONTAINER_NAME} does not exist."
+                        echo "Container ${CONTAINER_NAME} does not exist. No need to stop or remove."
                     }
                 }
             }
-		}
+        }
         stage('Deploy as container')
 		{
 			steps
@@ -433,15 +448,61 @@ pipeline {
     }
 }
 ```
+![screenshot showing Java installation confirmation](./images/ec2.png)
+![screenshot showing Java installation confirmation](./images/ec2.png)
+
 
 #### 3.7 Configure Deployment Using Ansible:
 
 Set environment variables: Before running your Ansible playbook, set your Docker Hub credentials as environment variables in your shell:
 ```bash
-export DOCKER_USERNAME="mahshamim" # your dockerhub username
-export DOCKER_PASSWORD="01614747054@R!f" # your dockerhub password 
+export DOCKER_USERNAME='mahshamim' # your dockerhub username
+export DOCKER_PASSWORD='01614747054@R!f' # your dockerhub password 
 
 ```
+
+Ansible, Docker and Kubernetes Pipeline CI/CD
+```groovy
+pipeline {
+    agent any
+    environment {
+        DOCKER_CREDENTIALS_ID = 'dockerhub'
+        ANSIBLE_PLAYBOOK = 'playbook.yml' // Path to your Ansible playbook
+        // Use the full path instead of ~
+        KUBECONFIG = '/var/lib/jenkins/.kube/config'
+    }
+    stages {
+        stage('Code Checkout') {
+            steps {
+                git branch: 'master', url: 'https://github.com/mah-shamim/industry-grade-project-i.git'
+            }
+        }
+        stage('Run Ansible Playbook') {
+            steps {
+                script {
+                    // Use the withCredentials block to inject Docker Hub credentials
+                    withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                        withEnv(['KUBECONFIG_PATH=/var/lib/jenkins/.kube/config']) {
+                            sh 'ansible-playbook -i ~/ansible/inventory.ini playbook.yml --become'
+                        }
+                    }
+                }
+            }
+        }
+    }
+    post {
+        success {
+            echo 'Ansible playbook executed successfully!'
+        }
+        failure {
+            echo 'Ansible playbook execution failed.'
+        }
+    }
+}
+```
+![screenshot showing Java installation confirmation](./images/ec2.png)
+![screenshot showing Java installation confirmation](./images/ec2.png)
+
 Create an Ansible playbook for deployment:
 ```yaml
 - hosts: localhost
@@ -455,12 +516,16 @@ Create an Ansible playbook for deployment:
      image_name: "mahshamim/abstechnologies-ansible"
      docker_username: "{{ lookup('env', 'DOCKER_USERNAME') }}"
      docker_password: "{{ lookup('env', 'DOCKER_PASSWORD') }}"
-     kubeconfig_path: '/var/lib/jenkins/.kube/config' #~/.kube/config
+     kubeconfig_path: "{{ lookup('env', 'KUBECONFIG_PATH') }}"
      deployment_file: './k8s_deployments/deployment.yml'
      service_file: './k8s_deployments/service.yaml'
      namespace: "abc-technologies-ansible" # Add your desired namespace here
      docker_host: "unix:///var/run/docker.sock"
   tasks:
+     - name: Debug kubeconfig path
+       debug:
+          msg: "Kubeconfig path is {{ kubeconfig_path }}"
+
      - name: Log in to Docker Hub
        command: echo "{{ docker_password }}" | docker login -u "{{ docker_username }}" --password-stdin
 
@@ -520,16 +585,26 @@ Create an Ansible playbook for deployment:
           published_ports:
              - "9292:8080"
 
-     - name: Log in to Docker Hub
+        #- name: Log in to Docker Hub
         #command: docker login -u "{{ docker_username }}" -p "{{ docker_password }}"
-       command: echo "{{ docker_password }}" | docker login -u "{{ docker_username }}" --password-stdin
-       no_log: true
+        #command: echo "{{ docker_password }}" | docker login -u "{{ docker_username }}" --password-stdin
+        #no_log: true
+     - name: Log in to Docker Hub
+       docker_login:
+          username: "{{ docker_username }}"
+          password: "{{ docker_password }}"
 
      - name: Tag Docker image for Docker Hub
        command: docker tag {{ image_name }} "{{ image_name }}:{{ docker_tag }}"
 
      - name: Push Docker image to Docker Hub
        command: docker push "{{ image_name }}:{{ docker_tag }}"
+
+               #- name: Push Docker image to Docker Hub
+               #docker_image:
+               #name: "{{ image_name }}"
+               #tag: "{{ docker_tag }}"
+        #push: yes
 
      - name: Ensure Kubernetes namespace exists
        kubernetes.core.k8s:
@@ -556,14 +631,13 @@ Create an Ansible playbook for deployment:
 
 **Test the Ansible Playbook:** Run the following command to execute the playbook:
 ```bash
-cd industry-grade-project-i
 ansible-playbook path/to/your/playbook.yml
 ```
 OR
 ```bash
-cd industry-grade-project-i
 ansible-playbook -i inventory.ini path/to/your/playbook.yml --become
 ```
+![screenshot showing Java installation confirmation](./images/ec2.png)
 
 **Check Project**
 ```html
@@ -623,6 +697,7 @@ If you haven't already enabled the Kubernetes dashboard, you need to do so by ru
 
 ```bash
 minikube addons enable dashboard
+minikube addons enable metrics-server
 ```
 
 ### 3.8.5. *Access the Dashboard*
