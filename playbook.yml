@@ -74,10 +74,14 @@
         published_ports:
           - "9292:8080"
 
-    - name: Log in to Docker Hub
+    #- name: Log in to Docker Hub
       #command: docker login -u "{{ docker_username }}" -p "{{ docker_password }}"
-      command: echo "{{ docker_password }}" | docker login -u "{{ docker_username }}" --password-stdin
-      no_log: true
+      #command: echo "{{ docker_password }}" | docker login -u "{{ docker_username }}" --password-stdin
+      #no_log: true
+    - name: Log in to Docker Hub
+      docker_login:
+        username: "{{ docker_username }}"
+        password: "{{ docker_password }}"
 
     - name: Tag Docker image for Docker Hub
       command: docker tag {{ image_name }} "{{ image_name }}:{{ docker_tag }}"
