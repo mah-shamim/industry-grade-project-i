@@ -91,10 +91,10 @@
 
     - name: Push Docker image to Docker Hub
       docker_image:
-        name: mahshamim/abstechnologies-ansible
-        tag: latest
+        name: {{ image_name }}
+        tag: {{ docker_tag }}
         push: yes
-        
+
     - name: Ensure Kubernetes namespace exists
       kubernetes.core.k8s:
         name: "{{ namespace }}"
