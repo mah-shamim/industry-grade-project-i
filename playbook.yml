@@ -86,14 +86,14 @@
     - name: Tag Docker image for Docker Hub
       command: docker tag {{ image_name }} "{{ image_name }}:{{ docker_tag }}"
 
-    #- name: Push Docker image to Docker Hub
-      #command: docker push "{{ image_name }}:{{ docker_tag }}"
-
     - name: Push Docker image to Docker Hub
-      docker_image:
-        name: "{{ image_name }}"
-        tag: "{{ docker_tag }}"
-        push: yes
+      command: docker push "{{ image_name }}:{{ docker_tag }}"
+
+    #- name: Push Docker image to Docker Hub
+      #docker_image:
+        #name: "{{ image_name }}"
+        #tag: "{{ docker_tag }}"
+        #push: yes
 
     - name: Ensure Kubernetes namespace exists
       kubernetes.core.k8s:
