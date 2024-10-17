@@ -9,7 +9,7 @@
     image_name: "mahshamim/abstechnologies-ansible"
     docker_username: "{{ lookup('env', 'DOCKER_USERNAME') }}"
     docker_password: "{{ lookup('env', 'DOCKER_PASSWORD') }}"
-    kubeconfig_path: "{{ lookup('env', 'KUBECONFIG_PATH') | default('home/ubuntu/.kube/config') }}"
+    kubeconfig_path: "{{ lookup('env', 'KUBECONFIG_PATH') | default('/home/ubuntu/.kube/config') }}"
     #kubeconfig_path: '/var/lib/jenkins/.kube/config' #~/.kube/config
     deployment_file: './k8s_deployments/deployment.yml'
     service_file: './k8s_deployments/service.yaml'
@@ -19,7 +19,7 @@
     - name: Debug kubeconfig path
       debug:
         msg: "Kubeconfig path is {{ kubeconfig_path }}"
-        
+
     - name: Log in to Docker Hub
       command: echo "{{ docker_password }}" | docker login -u "{{ docker_username }}" --password-stdin
 
