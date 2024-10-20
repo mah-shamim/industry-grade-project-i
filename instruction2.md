@@ -44,7 +44,7 @@ This guide outlines the steps to set up an AWS EC2 instance with necessary tools
    ```
 
   **Screenshot:** Add a screenshot of the terminal connection process.
-  ![screenshot of the terminal connection process](./images/ec2.png)
+  ![screenshot of the terminal connection process](./images/ssh-client.png)
 
 ### **1.3 Update and Upgrade Packages**
 ```bash
@@ -62,15 +62,15 @@ sudo apt install openjdk-11-jdk -y
 java -version
 ```
 **Screenshot:** Add a screenshot showing Java installation confirmation.
-![screenshot showing Java installation confirmation](./images/ec2.png)
+![screenshot showing Java installation confirmation](./images/java-version.png)
 
 ### **2.2 Install Git**
 ```bash
 sudo apt-get install git -y
 git --version
 ```
-**Screenshot:** Add a screenshot showing Git installation confirmation.
-![screenshot showing Git installation confirmation](./images/ec2.png)
+**Screenshot:** Add a screenshot showing Git installation confirmation.\
+![screenshot showing Git installation confirmation](./images/git-version.png)
 
 ### **2.3 Install Maven**
 Maven is used to build Java projects.
@@ -79,7 +79,7 @@ sudo apt install maven -y
 mvn -version
 ```
 **Screenshot:** Add a screenshot showing Maven installation confirmation.
-![screenshot showing Maven installation confirmation](./images/ec2.png)
+![screenshot showing Maven installation confirmation](./images/mvn-version.png)
 
 ### **2.4 Install Docker**
 Docker will containerize the application.
@@ -96,8 +96,8 @@ sudo usermod -aG docker $USER
 ```
 - **Log out and re-login** for the group changes to take effect.
 
-**Screenshot:** Add a screenshot showing Docker installation confirmation.
-![screenshot showing Docker installation confirmation](./images/ec2.png)
+**Screenshot:** Add a screenshot showing Docker installation confirmation.\
+![screenshot showing Docker installation confirmation](./images/docker-version.png)
 
 ### **2.5 Install Jenkins**
 Jenkins automates builds and deployments.
@@ -126,7 +126,7 @@ sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 ```
 
 **Screenshot:** Add a screenshot of Jenkins setup and initial password retrieval.
-![screenshot of Jenkins setup and initial password retrieval](./images/ec2.png)
+![screenshot of Jenkins setup and initial password retrieval](./images/jenkins.png)
 
 ### **2.6 Install Ansible**
 Ansible will automate the deployment process.
@@ -183,7 +183,7 @@ deactivate
 ```
 
 **Screenshot:** Add a screenshot showing Ansible installation confirmation.
-![screenshot showing Ansible installation confirmation](./images/ec2.png)
+![screenshot showing Ansible installation confirmation](./images/ansible-version.png)
 
 ### **2.7 Add Remote Hosts to Inventory**
 Edit the `~/ansible/hosts` file to include your remote servers:
@@ -250,8 +250,18 @@ sudo sed -i "s|client-key: .*|client-key: /var/lib/jenkins/.minikube/profiles/mi
 #kubectl config view --raw > /tmp/kubeconfig
 ```
 
-**Screenshot:** Add a screenshot showing Kubernetes installation confirmation.
-![screenshot showing Kubernetes installation confirmation](./images/ec2.png)
+**Check kubectl and minikube Version:**
+```bash
+$ kubectl version
+
+Client Version: v1.31.1
+Kustomize Version: v5.4.2
+Server Version: v1.31.0
+
+$ minikube version
+minikube version: v1.34.0
+commit: 210b148df93a80eb872ecbeb7e35281b3c582c61
+```
 
 ### **2.9 Install Prometheus & Grafana**
 
@@ -303,7 +313,7 @@ cd industry-grade-project-i
     - Kubernetes Plugin
     - SSH Agent Plugin
     - Restart Jenkins if prompted.
-       ![Install required plugins](./images/ec2.png)
+       ![Install required plugins](./images/jenkins-plugins.png)
 3. **Integrate GitHub with Jenkins**:
     - Add GitHub credentials:
         - Go to Jenkins Dashboard > Manage Jenkins > Manage Credentials.
@@ -538,7 +548,6 @@ Create an Ansible playbook for deployment:
      - name: List installed packages
        ansible.builtin.command: /home/ubuntu/k8s-ansible-venv/bin/pip list
 
-
      - name: Check if Docker is already installed
        command: docker --version
        register: docker_installed
@@ -585,10 +594,6 @@ Create an Ansible playbook for deployment:
           published_ports:
              - "9292:8080"
 
-        #- name: Log in to Docker Hub
-        #command: docker login -u "{{ docker_username }}" -p "{{ docker_password }}"
-        #command: echo "{{ docker_password }}" | docker login -u "{{ docker_username }}" --password-stdin
-        #no_log: true
      - name: Log in to Docker Hub
        docker_login:
           username: "{{ docker_username }}"
@@ -599,12 +604,6 @@ Create an Ansible playbook for deployment:
 
      - name: Push Docker image to Docker Hub
        command: docker push "{{ image_name }}:{{ docker_tag }}"
-
-               #- name: Push Docker image to Docker Hub
-               #docker_image:
-               #name: "{{ image_name }}"
-               #tag: "{{ docker_tag }}"
-        #push: yes
 
      - name: Ensure Kubernetes namespace exists
        kubernetes.core.k8s:
@@ -637,12 +636,57 @@ OR
 ```bash
 ansible-playbook -i inventory.ini path/to/your/playbook.yml --become
 ```
-![ansible-playbook](./images/ec2.png)
+
+**Ansible Playbook Output**
+```bash
+TASK [Stop existing Docker container if running] *******************************
+
+ok: [localhost]
+
+TASK [Remove existing Docker container if exists] ******************************
+
+ok: [localhost]
+
+TASK [Run Docker Container] ****************************************************
+
+changed: [localhost]
+
+TASK [Log in to Docker Hub] ****************************************************
+
+changed: [localhost]
+
+TASK [Tag Docker image for Docker Hub] *****************************************
+
+changed: [localhost]
+
+TASK [Push Docker image to Docker Hub] *****************************************
+
+changed: [localhost]
+
+TASK [Ensure Kubernetes namespace exists] **************************************
+
+changed: [localhost]
+
+TASK [Apply Kubernetes Deployment] *********************************************
+
+changed: [localhost]
+
+TASK [Apply Kubernetes Service] ************************************************
+
+changed: [localhost]
+
+PLAY RECAP *********************************************************************
+
+localhost                  : ok=19   changed=14   unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
+```
 
 **Check Project**
 ```html
 <domain or ip>:<port>/ABCtechnologies-1.0/
 ```
+![web-application](./images/ABCtechnologies-1.0.png)
+
+
 #### 3.8 Deploy Artifacts to Kubernetes
 3.8.1. **Kubernetes Deployment Manifest**:
 Create a file named `deployment.yml`:
