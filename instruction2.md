@@ -70,7 +70,7 @@ sudo apt-get install git -y
 git --version
 ```
 **Screenshot:** Add a screenshot showing Git installation confirmation.
-![screenshot showing Java installation confirmation](./images/ec2.png)
+![screenshot showing Git installation confirmation](./images/ec2.png)
 
 ### **2.3 Install Maven**
 Maven is used to build Java projects.
@@ -79,7 +79,7 @@ sudo apt install maven -y
 mvn -version
 ```
 **Screenshot:** Add a screenshot showing Maven installation confirmation.
-![screenshot showing Java installation confirmation](./images/ec2.png)
+![screenshot showing Maven installation confirmation](./images/ec2.png)
 
 ### **2.4 Install Docker**
 Docker will containerize the application.
@@ -97,7 +97,7 @@ sudo usermod -aG docker $USER
 - **Log out and re-login** for the group changes to take effect.
 
 **Screenshot:** Add a screenshot showing Docker installation confirmation.
-![screenshot showing Java installation confirmation](./images/ec2.png)
+![screenshot showing Docker installation confirmation](./images/ec2.png)
 
 ### **2.5 Install Jenkins**
 Jenkins automates builds and deployments.
@@ -126,7 +126,7 @@ sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 ```
 
 **Screenshot:** Add a screenshot of Jenkins setup and initial password retrieval.
-![screenshot showing Java installation confirmation](./images/ec2.png)
+![screenshot of Jenkins setup and initial password retrieval](./images/ec2.png)
 
 ### **2.6 Install Ansible**
 Ansible will automate the deployment process.
@@ -183,7 +183,7 @@ deactivate
 ```
 
 **Screenshot:** Add a screenshot showing Ansible installation confirmation.
-![screenshot showing Java installation confirmation](./images/ec2.png)
+![screenshot showing Ansible installation confirmation](./images/ec2.png)
 
 ### **2.7 Add Remote Hosts to Inventory**
 Edit the `~/ansible/hosts` file to include your remote servers:
@@ -251,7 +251,7 @@ sudo sed -i "s|client-key: .*|client-key: /var/lib/jenkins/.minikube/profiles/mi
 ```
 
 **Screenshot:** Add a screenshot showing Kubernetes installation confirmation.
-![screenshot showing Java installation confirmation](./images/ec2.png)
+![screenshot showing Kubernetes installation confirmation](./images/ec2.png)
 
 ### **2.9 Install Prometheus & Grafana**
 
@@ -264,7 +264,7 @@ cd prometheus-2.40.3.linux-amd64/
 ```
 
 **Screenshot:** Add a screenshot showing Prometheus installation confirmation.
-![screenshot showing Java installation confirmation](./images/ec2.png)
+![screenshot showing Prometheus installation confirmation](./images/ec2.png)
 
 #### **2.9.2 Install Grafana**
 ```bash
@@ -280,7 +280,7 @@ sudo systemctl enable grafana-server
 - **Access Grafana at** `http://<EC2_PUBLIC_IP>:3000` (default login: *admin/admin*).
 
 **Screenshot:** Add a screenshot showing Grafana login page.
-![screenshot showing Java installation confirmation](./images/ec2.png)
+![screenshot showing Grafana installation confirmation](./images/ec2.png)
 
 ---
 
@@ -303,14 +303,14 @@ cd industry-grade-project-i
     - Kubernetes Plugin
     - SSH Agent Plugin
     - Restart Jenkins if prompted.
-       ![screenshot showing Java installation confirmation](./images/ec2.png)
+       ![Install required plugins](./images/ec2.png)
 3. **Integrate GitHub with Jenkins**:
     - Add GitHub credentials:
         - Go to Jenkins Dashboard > Manage Jenkins > Manage Credentials.
         - Add a new set of credentials with:
             - Secret Text: Your GitHub Personal Access Key.
             - ID: Recognizable ID like `github`.\
-              ![screenshot showing Java installation confirmation](./images/ec2.png)
+              ![GitHub credentials](./images/github.png)
 4. **Set up a new Jenkins pipeline**:
     - Create Docker Hub Credentials:
         - Go to Jenkins Dashboard > Manage Jenkins > Manage Credentials.
@@ -318,7 +318,7 @@ cd industry-grade-project-i
             - Username: Your Docker Hub username.
             - Password: Your Docker Hub password or access token.
             - ID: Recognizable ID like `dockerhub`.\
-              ![screenshot showing Java installation confirmation](./images/ec2.png)
+              ![Docker Hub Credentials](./images/dockerhub.png)
 5. **Set up a new Jenkins pipeline**:
    - Create SSH Agent Credentials:
       - Go to Jenkins Dashboard > Manage Jenkins > Manage Credentials.
@@ -335,7 +335,7 @@ cd industry-grade-project-i
              ```
          - **ID**: Recognizable ID like `authorized_keys`.
          - **Description**: (Optional) Add a description for the SSH key for easier identification.\
-           ![screenshot showing Java installation confirmation](./images/ec2.png)
+           ![SSH Agent Credentials](./images/ssh-key.png)
 
 #### 3.3 Create a Freestyle Job for Each Task:
 - **Compile Job**: Uses Maven to compile the code.
@@ -448,8 +448,8 @@ pipeline {
     }
 }
 ```
-![screenshot showing Java installation confirmation](./images/ec2.png)
-![screenshot showing Java installation confirmation](./images/ec2.png)
+![basic *Jenkinsfile* for CI/CD](./images/pipeline-console-1.png)
+![basic *Jenkinsfile* for CI/CD](./images/pipeline-overview-1.png)
 
 
 #### 3.7 Configure Deployment Using Ansible:
@@ -500,8 +500,8 @@ pipeline {
     }
 }
 ```
-![screenshot showing Java installation confirmation](./images/ec2.png)
-![screenshot showing Java installation confirmation](./images/ec2.png)
+![Ansible, Docker and Kubernetes Pipeline CI/CD](./images/pipeline-console.png)
+![Ansible, Docker and Kubernetes Pipeline CI/CD](./images/pipeline-graph.png)
 
 Create an Ansible playbook for deployment:
 ```yaml
@@ -637,7 +637,7 @@ OR
 ```bash
 ansible-playbook -i inventory.ini path/to/your/playbook.yml --become
 ```
-![screenshot showing Java installation confirmation](./images/ec2.png)
+![ansible-playbook](./images/ec2.png)
 
 **Check Project**
 ```html
