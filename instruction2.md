@@ -62,8 +62,7 @@ Jenkins requires Java to run.
 sudo apt install openjdk-11-jdk -y
 java -version
 ```
-**Screenshot:** Add a screenshot showing Java installation confirmation.
-
+**Screenshot:** Add a screenshot showing Java installation confirmation.\
 ![screenshot showing Java installation confirmation](./images/java-version.png)
 
 ### **2.2 Install Git**
@@ -80,8 +79,7 @@ Maven is used to build Java projects.
 sudo apt install maven -y
 mvn -version
 ```
-**Screenshot:** Add a screenshot showing Maven installation confirmation.
-
+**Screenshot:** Add a screenshot showing Maven installation confirmation.\
 ![screenshot showing Maven installation confirmation](./images/mvn-version.png)
 
 ### **2.4 Install Docker**
@@ -128,7 +126,7 @@ echo "jenkins ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers > /dev/null
 sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 ```
 
-**Screenshot:** Add a screenshot of Jenkins setup and initial password retrieval.
+**Screenshot:** Add a screenshot of Jenkins setup and initial password retrieval.\
 ![screenshot of Jenkins setup and initial password retrieval](./images/jenkins.png)
 
 ### **2.6 Install Ansible**
@@ -644,47 +642,10 @@ ansible-playbook -i inventory.ini path/to/your/playbook.yml --become
 ```
 
 **Ansible Playbook Output**
-```bash
-TASK [Stop existing Docker container if running] *******************************
+| Jenkins Pipeline                                                                | Run Ansible Playbook                                                             |
+|---------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| ![Ansible, Docker and Kubernetes Pipeline CI/CD](./images/jenkins-manual-ansible-playbook.png) | ![Ansible, Docker and Kubernetes Pipeline CI/CD](./images/manual-ansible-playbook.png) |
 
-ok: [localhost]
-
-TASK [Remove existing Docker container if exists] ******************************
-
-ok: [localhost]
-
-TASK [Run Docker Container] ****************************************************
-
-changed: [localhost]
-
-TASK [Log in to Docker Hub] ****************************************************
-
-changed: [localhost]
-
-TASK [Tag Docker image for Docker Hub] *****************************************
-
-changed: [localhost]
-
-TASK [Push Docker image to Docker Hub] *****************************************
-
-changed: [localhost]
-
-TASK [Ensure Kubernetes namespace exists] **************************************
-
-changed: [localhost]
-
-TASK [Apply Kubernetes Deployment] *********************************************
-
-changed: [localhost]
-
-TASK [Apply Kubernetes Service] ************************************************
-
-changed: [localhost]
-
-PLAY RECAP *********************************************************************
-
-localhost                  : ok=19   changed=14   unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
-```
 
 **Check Project**
 ```html
