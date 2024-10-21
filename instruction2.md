@@ -461,9 +461,9 @@ pipeline {
     }
 }
 ```
-| ![basic *Jenkinsfile* for CI/CD](./images/pipeline-console-1.png)       | ![basic *Jenkinsfile* for CI/CD](./images/pipeline-overview-1.png) |
-| --------------------------------------- | --------------------------------------- |
-|  |                                         |
+| Pipeline Console                                                  | Pipeline Overview                                                  |
+|-------------------------------------------------------------------|--------------------------------------------------------------------|
+| ![basic *Jenkinsfile* for CI/CD](./images/pipeline-console-1.png) | ![basic *Jenkinsfile* for CI/CD](./images/pipeline-overview-1.png) |
 
 
 #### 3.7 Configure Deployment Using Ansible:
@@ -514,9 +514,9 @@ pipeline {
     }
 }
 ```
-| ![Ansible, Docker and Kubernetes Pipeline CI/CD](./images/pipeline-console.png)       | ![Ansible, Docker and Kubernetes Pipeline CI/CD](./images/pipeline-graph.png) |
-| --------------------------------------- | --------------------------------------- |
-|  |                                         |
+| Pipeline Console                                                                | Pipeline Overview                                                             |
+|---------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| ![Ansible, Docker and Kubernetes Pipeline CI/CD](./images/pipeline-console.png) | ![Ansible, Docker and Kubernetes Pipeline CI/CD](./images/pipeline-graph.png) |
 
 
 Create an Ansible playbook for deployment:
