@@ -307,8 +307,8 @@ cd industry-grade-project-i
 ```
 
 #### 3.2 Create Jenkins Pipeline:
-1. **Login to Jenkins** (`http://<EC2_PUBLIC_IP>:8080`).
-2. Install required plugins:
+3.2.1. **Login to Jenkins** (`http://<EC2_PUBLIC_IP>:8080`).
+3.2.2. Install required plugins:
    - Go to Manage Jenkins > Manage Plugins > Available. and search for
     - Docker Plugin
     - Docker Pipeline Plugin
@@ -317,22 +317,22 @@ cd industry-grade-project-i
     - SSH Agent Plugin
     - Restart Jenkins if prompted.
        ![Install required plugins](./images/jenkins-plugins.png)
-3. **Integrate GitHub with Jenkins**:
+3.2.3. **Integrate GitHub with Jenkins**:
     - Add GitHub credentials:
         - Go to Jenkins Dashboard > Manage Jenkins > Manage Credentials.
         - Add a new set of credentials with:
             - Secret Text: Your GitHub Personal Access Key.
             - ID: Recognizable ID like `github`.\
               ![GitHub credentials](./images/github.png)
-4. **Set up a new Jenkins pipeline**:
-    - Create Docker Hub Credentials:
-        - Go to Jenkins Dashboard > Manage Jenkins > Manage Credentials.
-        - Add a new set of credentials with:
-            - Username: Your Docker Hub username.
-            - Password: Your Docker Hub password or access token.
-            - ID: Recognizable ID like `dockerhub`.\
-              ![Docker Hub Credentials](./images/dockerhub.png)
-5. **Set up a new Jenkins pipeline**:
+
+   - Create Docker Hub Credentials:
+     - Go to Jenkins Dashboard > Manage Jenkins > Manage Credentials.
+     - Add a new set of credentials with:
+         - Username: Your Docker Hub username.
+         - Password: Your Docker Hub password or access token.
+         - ID: Recognizable ID like `dockerhub`.\
+           ![Docker Hub Credentials](./images/dockerhub.png)
+
    - Create SSH Agent Credentials:
       - Go to Jenkins Dashboard > Manage Jenkins > Manage Credentials.
       - Add a new set of credentials with:
