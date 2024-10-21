@@ -249,6 +249,12 @@ sudo sed -i "s|client-key: .*|client-key: /var/lib/jenkins/.minikube/profiles/mi
 
 #View Raw Kubernetes Configuration
 #kubectl config view --raw > /tmp/kubeconfig
+
+#Install CNI (Calico)
+kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+
+#check the cluster status
+kubectl get nodes
 ```
 
 **Check kubectl and minikube Version:**
@@ -263,35 +269,6 @@ $ minikube version
 minikube version: v1.34.0
 commit: 210b148df93a80eb872ecbeb7e35281b3c582c61
 ```
-
-### **2.9 Install Prometheus & Grafana**
-
-#### **2.9.1 Install Prometheus**
-```bash
-wget https://github.com/prometheus/prometheus/releases/download/v2.40.3/prometheus-2.40.3.linux-amd64.tar.gz
-tar -xvzf prometheus-2.40.3.linux-amd64.tar.gz
-cd prometheus-2.40.3.linux-amd64/
-./prometheus --config.file=prometheus.yml
-```
-
-**Screenshot:** Add a screenshot showing Prometheus installation confirmation.
-![screenshot showing Prometheus installation confirmation](./images/ec2.png)
-
-#### **2.9.2 Install Grafana**
-```bash
-sudo apt-get install -y software-properties-common
-curl https://packages.grafana.com/gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/grafana-archive-keyring.gpg
-echo "deb [signed-by=/usr/share/keyrings/grafana-archive-keyring.gpg] https://packages.grafana.com/oss/deb stable main" | sudo tee /etc/apt/sources.list.d/grafana.list
-sudo apt-get update
-sudo apt-get install grafana -y
-sudo systemctl start grafana-server
-sudo systemctl enable grafana-server
-```
-
-- **Access Grafana at** `http://<EC2_PUBLIC_IP>:3000` (default login: *admin/admin*).
-
-**Screenshot:** Add a screenshot showing Grafana login page.
-![screenshot showing Grafana installation confirmation](./images/ec2.png)
 
 ---
 
@@ -761,96 +738,127 @@ Copy the token and use it for logging into the dashboard.
 
 ### **4. Set Up Monitoring with Prometheus and Grafana**
 
-#### 4.1 Configure Prometheus
-1. **Edit Prometheus Configuration**:
-   Open the `prometheus.yml` file and add your service endpoint for monitoring:
-   ```yaml
-   scrape_configs:
-     - job_name: 'kubernetes-services'
-       kubernetes_sd_configs:
-         - role: endpoints
-       relabel_configs:
-         - action: labelmap
-           regex: __meta_kubernetes_service_label_(.+)
-         - source_labels: [__meta_kubernetes_service_name]
-           action: replace
-           target_label: service
-           replacement: $1
-   ```
+#### Step 2: Install Helm
+Helm is required to install and manage Prometheus and Grafana using Helm charts.
 
-2. **Start Prometheus**:
-   Restart Prometheus with the updated configuration. You may want to run it as a Docker container for easier management:
-   ```bash
-   docker run -d -p 9090:9090 \
-       --name prometheus \
-       -v $(pwd)/prometheus.yml:/etc/prometheus/prometheus.yml \
-       prom/prometheus
-   ```
-   OR
-   ```bash
-   /home/ubuntu/prometheus-2.40.3.linux-amd64/prometheus --config.file=prometheus.yml --web.listen-address=":9091"
-   ```
+2.1. **Download and Install Helm:**
+```bash
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+```
 
-#### 4.2 Configure Grafana
-1. **Access Grafana**:
-   Go to `http://<EC2_PUBLIC_IP>:3000` and log in using the default credentials (`admin/admin`).
+2.2. **Verify Helm Installation:**
+```bash
+helm version
+```
 
-2. **Add Prometheus as a Data Source**:
-    - Go to Configuration > Data Sources.
-    - Click on “Add Data Source”.
-    - Select “Prometheus”.
-    - Set the URL to `http://<EC2_PUBLIC_IP>:9090`.
-    - Click on “Save & Test”.
+#### Step 3: Add Helm Repositories for Prometheus and Grafana
+3.1. **Add Prometheus Helm Chart Repository:**
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+```
 
-3. **Create Dashboards**:
-    - Create a new dashboard to visualize metrics.
-    - Use queries like `rate(http_requests_total[5m])` to view request rates, etc.
+3.2. **Add Grafana Helm Chart Repository:**
+```bash
+helm repo add grafana https://grafana.github.io/helm-charts
+```
 
-4. **Import Docker Dashboard**:
-    - Go to Create > Import in Grafana.
-    - Use the dashboard ID 893 (a popular cAdvisor and Docker monitoring dashboard) or 1229 (another Docker metrics dashboard) from the Grafana website.
-    - Click Load.
-    - Select your Prometheus data source and click Import.
-    - This will create a dashboard to visualize metrics such as CPU, memory, disk, and network usage for Docker containers.
+3.3. **Update Helm Repositories:**
+```bash
+helm repo update
+```
 
-5. **Import Jenkins Dashboard**:
-    - Go to Create > Import in Grafana.
-    - Use the dashboard ID 11501 (Jenkins Prometheus Exporter) from the Grafana website.
-    - Click Load.
-    - Select your Prometheus data source and click Import.
-    - This dashboard includes visualizations for Jenkins job metrics, build times, queue lengths, and more.
+#### Step 4: Deploy Prometheus
+4.1. **Create a Kubernetes Namespace for Monitoring:**
+```bash
+kubectl create namespace monitoring
+```
 
-6. **Here are a few commonly used Grafana Dashboard IDs**:
-    - 315: Kubernetes cluster monitoring (via Prometheus)
-    - 449: Networking and Load Balancers
-    - 741: Kubernetes Deployment metrics
-    - 893: Docker and cAdvisor monitoring.
-    - 1860: Node Exporter Full for Linux servers.
-    - 2583: MySQL overview with Prometheus as the data source.
-    - 3831: Kubernetes Cluster Autoscaler (via Prometheus).
-    - 6417: Kubernetes Cluster (Prometheus).
-    - 7587: Prometheus Blackbox Exporter.
-    - 8171: Kubernetes Nodes.
-    - 9578: Alertmanager.
-    - 9621: Docker Registry.
-    - 10701: Nginx monitoring.
-    - 10988: Nginx monitoring.
-    - 11350: Erlang-Memory-Allocators.
-    - 11352: Erlang-Distribution.
-    - 11455: K8s / Storage / Volumes / Namespace.
-    - 11074: Elasticsearch monitoring.
-    - 11501: Jenkins monitoring using Prometheus metrics.
-    - 11558: 1 Docker Dashboard for Prometheus 中文版.
-    - 12006: Kubernetes apiserver
-    - 13041: Website monitoring
-    - 13332: kube-state-metrics-v2
-    - 13659: Blackbox Exporter (HTTP prober)
-    - 13770: 1 Kubernetes All-in-one Cluster Monitoring KR
-    - 14584: ArgoCD
-    - 14981: CoreDNS
-    - 15159: 1 - Cluster & Node - Health & Scaling
-    - 15160: 1 - Deployment Performance & Health
-    - Visit the Grafana Dashboards Repository for find more.
+4.2. **Install Prometheus Using Helm:**
+```bash
+helm install prometheus prometheus-community/prometheus --namespace monitoring
+```
+
+4.3. **Verify Prometheus Installation:**
+```bash
+kubectl get pods -n monitoring
+```
+
+From your local machine, run the following command (replace ec2-user with your actual EC2 username and your-ec2-public-ip with your EC2 instance’s public IP address):
+
+```bash
+ssh -i /path/to/your-key.pem -L 9090:127.0.0.1:9090 ec2-user@your-ec2-public-ip
+```
+
+Once the Prometheus pods are running, you can access the Prometheus UI:
+
+```bash
+kubectl port-forward -n monitoring deploy/prometheus-server 9090:9090
+```
+
+Access it via your browser at `http://localhost:9090`.
+
+#### Step 5: Deploy Grafana
+5.1. **Install Grafana Using Helm:**
+```bash
+helm install grafana grafana/grafana --namespace monitoring
+```
+
+5.2. **Check the Status of Grafana Pod:**
+```bash
+kubectl get pods -n monitoring
+```
+
+5.3. **Get Grafana Admin Password:**
+```bash
+kubectl get secret --namespace monitoring grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+```
+From your local machine, run the following command (replace ec2-user with your actual EC2 username and your-ec2-public-ip with your EC2 instance’s public IP address):
+
+```bash
+ssh -i /path/to/your-key.pem -L 3000:127.0.0.1:3000 ec2-user@your-ec2-public-ip
+```
+
+5.4. **Access Grafana UI:**
+Port-forward the Grafana service:
+```bash
+kubectl port-forward -n monitoring service/grafana 3000:80
+```
+
+Access Grafana UI in your browser: `http://localhost:3000`
+- Username: `admin`
+- Password: (retrieved from the previous step)
+
+#### Step 6: Configure Prometheus as a Data Source in Grafana
+Once you log in to Grafana, configure Prometheus as the data source:
+1. Navigate to **Configuration > Data Sources**.
+2. Add Prometheus as the data source.
+3. Set the URL to `http://prometheus-server.monitoring.svc.cluster.local:9090`.
+4. Save & Test the configuration.
+
+#### Step 7: Access Prometheus and Grafana from AWS EC2
+1. Expose the Prometheus and Grafana services using LoadBalancer or NodePort if you want to access them from your AWS EC2 public IP `http://54.166.211.35`.
+
+For NodePort, modify the service type:
+```bash
+kubectl edit service grafana -n monitoring
+```
+Change `type: ClusterIP` to `type: NodePort` and save.
+
+Check the NodePort assigned using:
+```bash
+kubectl get svc -n monitoring
+```
+Access Grafana using `http://<EC2_PUBLIC_IP>:<NodePort>`
+
+You can do the same for Prometheus.
+
+#### Step 8: Set Up Kubernetes Cluster Permissions for Monitoring
+Make sure Prometheus has access to scrape metrics from the Kubernetes cluster. Create a ClusterRole and RoleBinding:
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/main/example/rbac/prometheus/prometheus-cluster-role.yaml
+```
+
 
 ---
 
