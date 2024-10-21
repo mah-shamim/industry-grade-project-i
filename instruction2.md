@@ -49,7 +49,7 @@ This guide outlines the steps to set up an AWS EC2 instance with necessary tools
 
 ### **1.3 Update and Upgrade Packages**
 ```bash
-sudo apt-get update && sudo apt-get upgrade -y
+sudo apt-get update && sudo apt-get upgrade -y apt-transport-https ca-certificates curl
 ```
 
 ---
