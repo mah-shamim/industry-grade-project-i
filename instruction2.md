@@ -318,12 +318,12 @@ cd industry-grade-project-i
     - Restart Jenkins if prompted.
        ![Install required plugins](./images/jenkins-plugins.png)
 3.2.3. **Integrate GitHub with Jenkins**:
-    - Add GitHub credentials:
-        - Go to Jenkins Dashboard > Manage Jenkins > Manage Credentials.
-        - Add a new set of credentials with:
-            - Secret Text: Your GitHub Personal Access Key.
-            - ID: Recognizable ID like `github`.\
-              ![GitHub credentials](./images/github.png)
+   - Add GitHub credentials:
+     - Go to Jenkins Dashboard > Manage Jenkins > Manage Credentials.
+     - Add a new set of credentials with:
+         - Secret Text: Your GitHub Personal Access Key.
+         - ID: Recognizable ID like `github`.\
+           ![GitHub credentials](./images/github.png)
 
    - Create Docker Hub Credentials:
      - Go to Jenkins Dashboard > Manage Jenkins > Manage Credentials.
