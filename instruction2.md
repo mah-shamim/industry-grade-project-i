@@ -31,6 +31,7 @@ This guide outlines the steps to set up an AWS EC2 instance with necessary tools
    - **Add an SSH key pair** for connecting to your instance.
 
    **Screenshot:** Add a screenshot of the EC2 instance configuration.
+
    ![screenshot of the EC2 instance configuration](./images/ec2.png)
 
 
@@ -62,6 +63,7 @@ sudo apt install openjdk-11-jdk -y
 java -version
 ```
 **Screenshot:** Add a screenshot showing Java installation confirmation.
+
 ![screenshot showing Java installation confirmation](./images/java-version.png)
 
 ### **2.2 Install Git**
@@ -79,6 +81,7 @@ sudo apt install maven -y
 mvn -version
 ```
 **Screenshot:** Add a screenshot showing Maven installation confirmation.
+
 ![screenshot showing Maven installation confirmation](./images/mvn-version.png)
 
 ### **2.4 Install Docker**
@@ -458,8 +461,9 @@ pipeline {
     }
 }
 ```
-![basic *Jenkinsfile* for CI/CD](./images/pipeline-console-1.png)
-![basic *Jenkinsfile* for CI/CD](./images/pipeline-overview-1.png)
+| ![basic *Jenkinsfile* for CI/CD](./images/pipeline-console-1.png)       | ![basic *Jenkinsfile* for CI/CD](./images/pipeline-overview-1.png) |
+| --------------------------------------- | --------------------------------------- |
+|  |                                         |
 
 
 #### 3.7 Configure Deployment Using Ansible:
@@ -510,8 +514,10 @@ pipeline {
     }
 }
 ```
-![Ansible, Docker and Kubernetes Pipeline CI/CD](./images/pipeline-console.png)
-![Ansible, Docker and Kubernetes Pipeline CI/CD](./images/pipeline-graph.png)
+| ![Ansible, Docker and Kubernetes Pipeline CI/CD](./images/pipeline-console.png)       | ![Ansible, Docker and Kubernetes Pipeline CI/CD](./images/pipeline-graph.png) |
+| --------------------------------------- | --------------------------------------- |
+|  |                                         |
+
 
 Create an Ansible playbook for deployment:
 ```yaml
