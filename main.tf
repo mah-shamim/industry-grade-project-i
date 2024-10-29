@@ -54,7 +54,7 @@ resource "aws_security_group" "k8s_sg" {
 
 # EC2 instance configuration
 resource "aws_instance" "k8s_master" {
-  ami                    = "ami-0c55b159cbfafe1f0"  # Ubuntu 24.04 LTS AMI ID
+  ami                    = "ami-0866a3c8686eaeeba" #"ami-0c55b159cbfafe1f0"  # Ubuntu 24.04 LTS AMI ID
   instance_type          = "t2.medium"  # Use a bigger instance type for production
   key_name               = aws_key_pair.k8s_key.key_name
   subnet_id              = aws_subnet.k8s_subnet.id
