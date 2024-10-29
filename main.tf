@@ -60,7 +60,8 @@ resource "aws_instance" "k8s_master" {
   instance_type   = "t3.medium"
   subnet_id       = aws_subnet.k8s_subnet.id
   key_name        = aws_key_pair.k8s_key.key_name
-  security_groups = [aws_security_group.k8s_sg.name]
+  #security_groups = [aws_security_group.k8s_sg.name]
+  vpc_security_group_ids = [aws_security_group.k8s_sg.id]  # Change this line
 
   tags = {
     Name = "K8s-Master"
