@@ -84,7 +84,9 @@ resource "aws_instance" "k8s_master" {
     connection {
       type        = "ssh"
       user        = "ubuntu"
-      private_key = tls_private_key.k8s_key.private_key_pem
+      #private_key = tls_private_key.k8s_key.private_key_pem
+      private_key = file("~/.ssh/id_rsa")  # Adjust path to your private key
+      timeout     = "5m"                   # Increase timeout to 5 minutes
       host        = self.public_ip
     }
   }
