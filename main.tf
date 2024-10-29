@@ -10,7 +10,7 @@ resource "tls_private_key" "k8s_key" {
   rsa_bits  = 4096
 }
 
-resource "aws_key_pair" "k8s_key" {
+resource "aws_key_pair" "k8s-key" {
   key_name   = "k8s-key"
   public_key = tls_private_key.k8s_key.public_key_openssh
 }
