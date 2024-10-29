@@ -128,6 +128,10 @@ resource "aws_instance" "k8s_master" {
   vpc_security_group_ids = [aws_security_group.k8s_sg.id]
   associate_public_ip_address = true
 
+  tags = {
+    Name = "K8s-Master"
+  }
+
   # Script to install Kubernetes on instance startup
   user_data = <<-EOF
     #!/bin/bash
@@ -210,7 +214,7 @@ Type `yes` when prompted. This will deploy the VPC, subnet, security group, and 
 
 ### Step 7: (Optional) Configure Networking for the Cluster
 
-You may need to install a networking plugin. For example, using Calico:
+Need to install a networking plugin. For example, using Calico:
 
 ```bash
 kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
