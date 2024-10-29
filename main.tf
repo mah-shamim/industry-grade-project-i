@@ -5,14 +5,14 @@ provider "aws" {
 }
 
 # Generate an SSH key pair if not done in prerequisites
-resource "tls_private_key" "lab-test-01" {
+resource "tls_private_key" "k8s_key" {
   algorithm = "RSA"
   rsa_bits  = 4096
 }
 
-resource "aws_key_pair" "lab-test-01" {
-  key_name   = "lab-test-01"
-  public_key = tls_private_key.lab-test-01.public_key_openssh
+resource "aws_key_pair" "k8s_key" {
+  key_name   = "k8s-key"
+  public_key = tls_private_key.k8s_key.public_key_openssh
 }
 
 # VPC Configuration
@@ -59,7 +59,7 @@ resource "aws_instance" "k8s_master" {
   ami             = "ami-0c55b159cbfafe1f0" # Ubuntu 24.04 LTS AMI; update to match your region
   instance_type   = "t2.medium"
   subnet_id       = aws_subnet.k8s_subnet.id
-  key_name        = aws_key_pair.lab-test-01.key_name
+  key_name        = aws_key_pair.k8s_key.key_name
   security_groups = [aws_security_group.k8s_sg.name]
 
   tags = {
@@ -83,7 +83,7 @@ resource "aws_instance" "k8s_master" {
     connection {
       type        = "ssh"
       user        = "ubuntu"
-      private_key = tls_private_key.lab-test-01.private_key_pem
+      private_key = tls_private_key.k8s_key.private_key_pem
       host        = self.public_ip
     }
   }
