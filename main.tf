@@ -57,7 +57,7 @@ resource "aws_security_group" "k8s_sg" {
 # EC2 Instance for Control Plane
 resource "aws_instance" "k8s_master" {
   ami             = "ami-0325498274077fac5" #"ami-0c55b159cbfafe1f0" # Ubuntu 24.04 LTS AMI; update to match your region
-  instance_type   = "t2.medium"
+  instance_type   = "t3.medium"
   subnet_id       = aws_subnet.k8s_subnet.id
   key_name        = aws_key_pair.k8s_key.key_name
   security_groups = [aws_security_group.k8s_sg.name]
