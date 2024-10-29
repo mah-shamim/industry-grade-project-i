@@ -13,6 +13,10 @@ resource "tls_private_key" "k8s_key" {
 resource "aws_key_pair" "k8s_key" {
   key_name   = "k8s-key"
   public_key = tls_private_key.k8s_key.public_key_openssh
+
+  lifecycle {
+      ignore_changes = [public_key]
+  }
 }
 
 # VPC Configuration
@@ -70,7 +74,7 @@ resource "aws_instance" "k8s_master" {
   lifecycle {
     ignore_changes = [key_name]
   }
-  
+
   provisioner "remote-exec" {
     inline = [
       "sudo apt-get update -y",
