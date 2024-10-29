@@ -5,14 +5,14 @@ provider "aws" {
 }
 
 # Generate an SSH key pair if not done in prerequisites
-resource "tls_private_key" "k8s_key" {
+resource "tls_private_key" "lab-test-01" {
   algorithm = "RSA"
   rsa_bits  = 4096
 }
 
-resource "aws_key_pair" "k8s_key" {
-  key_name   = "k8s-key"
-  public_key = tls_private_key.k8s_key.public_key_openssh
+resource "aws_key_pair" "lab-test-01" {
+  key_name   = "lab-test-01"
+  public_key = tls_private_key.lab-test-01.public_key_openssh
 }
 
 # VPC Configuration
