@@ -5,7 +5,7 @@ provider "aws" {
 }
 
 # Generate an SSH key pair if not done in prerequisites
-resource "tls_private_key" "k8s_key" {
+resource "tls_private_key" "k8s-key" {
   algorithm = "RSA"
   rsa_bits  = 4096
 }
