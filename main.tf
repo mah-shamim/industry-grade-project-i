@@ -67,6 +67,10 @@ resource "aws_instance" "k8s_master" {
     Name = "K8s-Master"
   }
 
+  lifecycle {
+    ignore_changes = [key_name]
+  }
+  
   provisioner "remote-exec" {
     inline = [
       "sudo apt-get update -y",
