@@ -1,4 +1,6 @@
-To deploy a Kubernetes (K8s) cluster on AWS EC2 Ubuntu 24.04 using Terraform, here’s a hands-on example covering the complete setup and configuration process. This example will guide you through prerequisites, installation, Terraform configuration, and applying the configuration.
+# Automating Kubernetes Cluster Deployment Using Terraform (main.tf, init/plan/apply)
+
+Deploying a Kubernetes (K8s) cluster on AWS EC2 instances using Terraform involves several steps, from setting up your environment to applying your configuration. Below is a detailed hands-on example, including the necessary prerequisites, configuration, permissions, and the Terraform files required.
 
 ---
 

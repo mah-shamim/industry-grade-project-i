@@ -1,4 +1,7 @@
-### CI/CD Pipeline for Retail Company on AWS EC2 with Jenkins, Docker, Ansible, Kubernetes, Prometheus, and Grafana
+# CI/CD Pipeline Integration: Ansible Playbook for Kubernetes Resource Deployment
+
+
+#### CI/CD Pipeline for Retail Company on AWS EC2 with Jenkins, Docker, Ansible, Kubernetes, Prometheus, and Grafana
 
 This guide provides a comprehensive setup for creating a CI/CD pipeline using various tools such as Jenkins, Docker, Ansible, Kubernetes, Prometheus, and Grafana, all deployed on an AWS EC2 Ubuntu 24.04 instance.
 
@@ -49,7 +52,7 @@ This guide outlines the steps to set up an AWS EC2 instance with necessary tools
 
 ### **1.3 Update and Upgrade Packages**
 ```bash
-sudo apt-get update && sudo apt-get upgrade -y apt-transport-https ca-certificates curl
+sudo apt-get update && sudo apt-get install -y curl unzip git wget gnupg2 apt-transport-https ca-certificates gnupg lsb-release software-properties-common
 ```
 
 ---
@@ -88,6 +91,7 @@ Docker will containerize the application.
 sudo apt-get install docker.io -y
 sudo systemctl start docker
 sudo systemctl enable docker
+sudo chmod 666 /var/run/docker.sock
 docker --version
 ```
 - **Add your user to the Docker group:**
@@ -116,7 +120,6 @@ sudo systemctl enable jenkins
 **Permissions and Jenkins Docker Setup:**
 ```bash
 sudo usermod -aG docker jenkins
-sudo chmod 666 /var/run/docker.sock
 echo "jenkins ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers > /dev/null
 ```
 
@@ -445,8 +448,8 @@ pipeline {
 
 Set environment variables: Before running your Ansible playbook, set your Docker Hub credentials as environment variables in your shell:
 ```bash
-export DOCKER_USERNAME='mahshamim' # your dockerhub username
-export DOCKER_PASSWORD='01614747054@R!f' # your dockerhub password 
+export DOCKER_USERNAME='' # your dockerhub username
+export DOCKER_PASSWORD='' # your dockerhub password 
 
 ```
 
@@ -718,11 +721,13 @@ kubectl proxy --port=8001
 ### 3.8.9. *Access the Dashboard from Your Browser*
 Now, on your local machine, open the following URL in your web browser:
 
-
-http://127.0.0.1:8001/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/
+[Kubernetes dashboard](http://127.0.0.1:8001/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/)
 
 
 This should bring up the Kubernetes dashboard.
+
+**Screenshot:** Add a screenshot of the Kubernetes dashboard.
+![](images/workload_status.png)
 
 ### 3.8.10. *Authentication*
 The Kubernetes dashboard may ask for an authentication token. To get the token, you can use this command on the EC2 instance:
@@ -797,6 +802,9 @@ kubectl port-forward -n monitoring deploy/prometheus-server 9090:9090
 
 Access it via your browser at `http://localhost:9090`.
 
+**Screenshot:** Add a screenshot of the Prometheus dashboard.
+![Prometheus](images/Prometheus.png)
+
 #### Step 5: Deploy Grafana
 5.1. **Install Grafana Using Helm:**
 ```bash
@@ -851,6 +859,43 @@ kubectl get svc -n monitoring
 Access Grafana using `http://<EC2_PUBLIC_IP>:<NodePort>`
 
 You can do the same for Prometheus.
+```
+NAME                                                    READY   STATUS    RESTARTS   AGE
+pod/grafana-7d69f48648-vjpwg                            1/1     Running   0          19m
+pod/prometheus-alertmanager-0                           1/1     Running   0          21m
+pod/prometheus-kube-state-metrics-7b97cb57c6-npvcj      1/1     Running   0          21m
+pod/prometheus-prometheus-node-exporter-g2t7m           1/1     Running   0          21m
+pod/prometheus-prometheus-pushgateway-9f8c968d6-dr4vk   1/1     Running   0          21m
+pod/prometheus-server-6cbfc7ff77-dfzbb                  2/2     Running   0          6m25s
+
+NAME                                          TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/grafana                               ClusterIP   10.106.12.39    <none>        80/TCP     19m
+service/prometheus-alertmanager               ClusterIP   10.107.188.80   <none>        9093/TCP   21m
+service/prometheus-alertmanager-headless      ClusterIP   None            <none>        9093/TCP   21m
+service/prometheus-kube-state-metrics         ClusterIP   10.98.200.95    <none>        8080/TCP   21m
+service/prometheus-prometheus-node-exporter   ClusterIP   10.105.75.66    <none>        9100/TCP   21m
+service/prometheus-prometheus-pushgateway     ClusterIP   10.100.72.249   <none>        9091/TCP   21m
+service/prometheus-server                     ClusterIP   10.97.70.199    <none>        80/TCP     21m
+
+NAME                                                 DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE
+daemonset.apps/prometheus-prometheus-node-exporter   1         1         1       1            1           kubernetes.io/os=linux   21m
+
+NAME                                                READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/grafana                             1/1     1            1           19m
+deployment.apps/prometheus-kube-state-metrics       1/1     1            1           21m
+deployment.apps/prometheus-prometheus-pushgateway   1/1     1            1           21m
+deployment.apps/prometheus-server                   1/1     1            1           21m
+
+NAME                                                          DESIRED   CURRENT   READY   AGE
+replicaset.apps/grafana-7d69f48648                            1         1         1       19m
+replicaset.apps/prometheus-kube-state-metrics-7b97cb57c6      1         1         1       21m
+replicaset.apps/prometheus-prometheus-pushgateway-9f8c968d6   1         1         1       21m
+replicaset.apps/prometheus-server-6cbfc7ff77                  1         1         1       6m25s
+replicaset.apps/prometheus-server-7d64c54f54                  0         0         0       21m
+
+NAME                                       READY   AGE
+statefulset.apps/prometheus-alertmanager   1/1     21m
+```
 
 #### Step 8: Set Up Kubernetes Cluster Permissions for Monitoring
 Make sure Prometheus has access to scrape metrics from the Kubernetes cluster. Create a ClusterRole and RoleBinding:
@@ -858,7 +903,15 @@ Make sure Prometheus has access to scrape metrics from the Kubernetes cluster. C
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/main/example/rbac/prometheus/prometheus-cluster-role.yaml
 ```
-
+**Screenshot:** Add a screenshot of the Grafana dashboard.
+![grafana](images/grafana-01.png)
+![grafana](images/grafana-02.png)
+![grafana](images/grafana-03.png)
+![grafana](images/grafana-04.png)
+![grafana](images/grafana-05.png)
+![grafana](images/grafana-06.png)
+![grafana](images/grafana-07.png)
+![grafana](images/grafana-08.png)
 
 ---
 
@@ -884,4 +937,4 @@ Make sure to test your setup thoroughly and modify the configurations as needed 
 
 ---
 
-Feel free to ask if you have any questions or need further assistance!
+
