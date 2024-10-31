@@ -1,3 +1,8 @@
+1. CI/CD Pipeline Integration: Ansible Playbook for Kubernetes Resource Deployment[^1]
+2. Automating Kubernetes Cluster Deployment Using Terraform (main.tf, init/plan/apply)[^2]
+3. Kubernetes Observability: Installing Prometheus and Grafana Using Helm Charts[^3]
+
+[^1]:
 # 1. CI/CD Pipeline Integration: Ansible Playbook for Kubernetes Resource Deployment
 
 
@@ -929,7 +934,7 @@ kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheu
 
 ---
 
-
+[^2]:
 # 2. Automating Kubernetes Cluster Deployment Using Terraform (main.tf, init/plan/apply)
 
 Deploying a Kubernetes (K8s) cluster on AWS EC2 instances using Terraform involves several steps, from setting up your environment to applying your configuration. Below is a detailed hands-on example, including the necessary prerequisites, configuration, permissions, and the Terraform files required.
@@ -1176,7 +1181,7 @@ terraform destroy
 
 ---
 
-
+[^3]:
 # 3. Kubernetes Observability: Installing Prometheus and Grafana Using Helm Charts
 
 To deploy a Prometheus and Grafana monitoring stack on a Kubernetes cluster on an AWS EC2 Ubuntu 24.04 instance using Helm charts, follow these steps:
