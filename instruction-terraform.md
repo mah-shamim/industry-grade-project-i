@@ -1,3 +1,9 @@
+
+1. [README](README.md)
+2. [CI/CD Pipeline Integration: Ansible Playbook for Kubernetes Resource Deployment](instruction2.md)
+3. Automating Kubernetes Cluster Deployment Using Terraform (main.tf, init/plan/apply)
+4. [Kubernetes Observability: Installing Prometheus and Grafana Using Helm Charts](instruction-monitoring.md)
+
 # Automating Kubernetes Cluster Deployment Using Terraform (main.tf, init/plan/apply)
 
 Deploying a Kubernetes (K8s) cluster on AWS EC2 instances using Terraform involves several steps, from setting up your environment to applying your configuration. Below is a detailed hands-on example, including the necessary prerequisites, configuration, permissions, and the Terraform files required.

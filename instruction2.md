@@ -1,3 +1,10 @@
+
+1. [README](README.md)
+2. CI/CD Pipeline Integration: Ansible Playbook for Kubernetes Resource Deployment
+3. [Automating Kubernetes Cluster Deployment Using Terraform (main.tf, init/plan/apply)](instruction-terraform.md)
+4. [Kubernetes Observability: Installing Prometheus and Grafana Using Helm Charts](instruction-monitoring.md)
+
+
 # CI/CD Pipeline Integration: Ansible Playbook for Kubernetes Resource Deployment
 
 

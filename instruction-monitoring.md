@@ -1,3 +1,9 @@
+
+1. [README](README.md)
+2. [CI/CD Pipeline Integration: Ansible Playbook for Kubernetes Resource Deployment](instruction2.md)
+3. [Automating Kubernetes Cluster Deployment Using Terraform (main.tf, init/plan/apply)](instruction-terraform.md)
+4. Kubernetes Observability: Installing Prometheus and Grafana Using Helm Charts
+
 # Kubernetes Observability: Installing Prometheus and Grafana Using Helm Charts
 
 To deploy a Prometheus and Grafana monitoring stack on a Kubernetes cluster on an AWS EC2 Ubuntu 24.04 instance using Helm charts, follow these steps:
