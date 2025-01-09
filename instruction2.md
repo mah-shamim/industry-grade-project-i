@@ -69,7 +69,8 @@ sudo apt-get update && sudo apt-get install -y curl unzip git wget gnupg2 apt-tr
 ### **2.1 Install Java**
 Jenkins requires Java to run.
 ```bash
-sudo apt install openjdk-11-jdk -y
+sudo apt update
+sudo apt install openjdk-17-jdk -y
 java -version
 ```
 **Screenshot:** Add a screenshot showing Java installation confirmation.\
