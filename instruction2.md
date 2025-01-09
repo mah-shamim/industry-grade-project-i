@@ -294,6 +294,7 @@ cd industry-grade-project-i
 
 #### 3.2 Create Jenkins Pipeline:
 3.2.1. **Login to Jenkins** (`http://<EC2_PUBLIC_IP>:8080`).
+
 3.2.2. Install required plugins:
    - Go to Manage Jenkins > Manage Plugins > Available. and search for
     - Docker Plugin
