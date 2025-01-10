@@ -766,17 +766,32 @@ helm version
 ```
 
 #### Step 3: Add Helm Repositories for Prometheus and Grafana
-3.1. **Add Prometheus Helm Chart Repository:**
+3.1. **Install CRI-Docker:**
+```bash
+sudo wget https://raw.githubusercontent.com/lerndevops/labs/master/scripts/installCRIDockerd.sh -P /tmp
+sudo chmod 755 /tmp/installCRIDockerd.sh
+sudo bash /tmp/installCRIDockerd.sh
+sudo systemctl restart cri-docker.service
+```
+
+3.2. **Install kubeadm,kubelet,kubectl:**
+```bash
+sudo wget https://raw.githubusercontent.com/lerndevops/labs/master/scripts/installK8S.sh -P /tmp
+sudo chmod 755 /tmp/installK8S.sh
+sudo bash /tmp/installK8S.sh
+```
+
+3.3. **Add Prometheus Helm Chart Repository:**
 ```bash
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 ```
 
-3.2. **Add Grafana Helm Chart Repository:**
+3.4. **Add Grafana Helm Chart Repository:**
 ```bash
 helm repo add grafana https://grafana.github.io/helm-charts
 ```
 
-3.3. **Update Helm Repositories:**
+3.5. **Update Helm Repositories:**
 ```bash
 helm repo update
 ```
