@@ -736,7 +736,7 @@ Now, on your local machine, open the following URL in your web browser:
 This should bring up the Kubernetes dashboard.
 
 **Screenshot:** Add a screenshot of the Kubernetes dashboard.
-![](images/workload_status.png)
+![](images/workload-status.png)
 
 ### 3.8.10. *Authentication*
 The Kubernetes dashboard may ask for an authentication token. To get the token, you can use this command on the EC2 instance:
