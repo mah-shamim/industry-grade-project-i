@@ -853,7 +853,7 @@ Once you log in to Grafana, configure Prometheus as the data source:
 4. Save & Test the configuration.
 
 #### Step 7: Access Prometheus and Grafana from AWS EC2
-1. Expose the Prometheus and Grafana services using LoadBalancer or NodePort if you want to access them from your AWS EC2 public IP `http://54.166.211.35`.
+1. Expose the Prometheus and Grafana services using LoadBalancer or NodePort if you want to access them from your AWS EC2 public IP `http://<EC2_PUBLIC_IP>`.
 
 For NodePort, modify the service type:
 ```bash
